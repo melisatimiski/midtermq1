@@ -1,0 +1,4620 @@
+
+son.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .isr_vector   00000188  08000000  08000000  00010000  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text         00001d30  08000188  08000188  00010188  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .rodata       00000000  08001eb8  08001eb8  00020004  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .ARM.extab    00000000  08001eb8  08001eb8  00020004  2**0
+                  CONTENTS
+  4 .ARM          00000000  08001eb8  08001eb8  00020004  2**0
+                  CONTENTS
+  5 .preinit_array 00000000  08001eb8  08001eb8  00020004  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  6 .init_array   00000004  08001eb8  08001eb8  00011eb8  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  7 .fini_array   00000004  08001ebc  08001ebc  00011ebc  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  8 .data         00000004  20000000  08001ec0  00020000  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  9 .ccmram       00000000  10000000  10000000  00020004  2**0
+                  CONTENTS
+ 10 .bss          00000324  20000004  20000004  00020004  2**2
+                  ALLOC
+ 11 ._user_heap_stack 00000600  20000328  20000328  00020004  2**0
+                  ALLOC
+ 12 .ARM.attributes 00000030  00000000  00000000  00020004  2**0
+                  CONTENTS, READONLY
+ 13 .debug_info   00007c72  00000000  00000000  00020034  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 14 .debug_abbrev 000013c4  00000000  00000000  00027ca6  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 15 .debug_aranges 00000638  00000000  00000000  00029070  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 16 .debug_ranges 000005a0  00000000  00000000  000296a8  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 17 .debug_macro  000197b6  00000000  00000000  00029c48  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 18 .debug_line   0000757c  00000000  00000000  000433fe  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 19 .debug_str    000c7a2c  00000000  00000000  0004a97a  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 20 .comment      00000050  00000000  00000000  001123a6  2**0
+                  CONTENTS, READONLY
+ 21 .debug_frame  000018e4  00000000  00000000  001123f8  2**2
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+
+Disassembly of section .text:
+
+08000188 <__do_global_dtors_aux>:
+ 8000188:	b510      	push	{r4, lr}
+ 800018a:	4c05      	ldr	r4, [pc, #20]	; (80001a0 <__do_global_dtors_aux+0x18>)
+ 800018c:	7823      	ldrb	r3, [r4, #0]
+ 800018e:	b933      	cbnz	r3, 800019e <__do_global_dtors_aux+0x16>
+ 8000190:	4b04      	ldr	r3, [pc, #16]	; (80001a4 <__do_global_dtors_aux+0x1c>)
+ 8000192:	b113      	cbz	r3, 800019a <__do_global_dtors_aux+0x12>
+ 8000194:	4804      	ldr	r0, [pc, #16]	; (80001a8 <__do_global_dtors_aux+0x20>)
+ 8000196:	f3af 8000 	nop.w
+ 800019a:	2301      	movs	r3, #1
+ 800019c:	7023      	strb	r3, [r4, #0]
+ 800019e:	bd10      	pop	{r4, pc}
+ 80001a0:	20000004 	.word	0x20000004
+ 80001a4:	00000000 	.word	0x00000000
+ 80001a8:	08001ea0 	.word	0x08001ea0
+
+080001ac <frame_dummy>:
+ 80001ac:	b508      	push	{r3, lr}
+ 80001ae:	4b03      	ldr	r3, [pc, #12]	; (80001bc <frame_dummy+0x10>)
+ 80001b0:	b11b      	cbz	r3, 80001ba <frame_dummy+0xe>
+ 80001b2:	4903      	ldr	r1, [pc, #12]	; (80001c0 <frame_dummy+0x14>)
+ 80001b4:	4803      	ldr	r0, [pc, #12]	; (80001c4 <frame_dummy+0x18>)
+ 80001b6:	f3af 8000 	nop.w
+ 80001ba:	bd08      	pop	{r3, pc}
+ 80001bc:	00000000 	.word	0x00000000
+ 80001c0:	20000008 	.word	0x20000008
+ 80001c4:	08001ea0 	.word	0x08001ea0
+
+080001c8 <main>:
+#include <stm32f407xx.h>
+
+int main()
+{
+ 80001c8:	b480      	push	{r7}
+ 80001ca:	af00      	add	r7, sp, #0
+	RCC->AHB1ENR=1<<3;
+ 80001cc:	4b3f      	ldr	r3, [pc, #252]	; (80002cc <main+0x104>)
+ 80001ce:	2208      	movs	r2, #8
+ 80001d0:	631a      	str	r2, [r3, #48]	; 0x30
+	GPIOD->MODER=0x50000000;
+ 80001d2:	4b3f      	ldr	r3, [pc, #252]	; (80002d0 <main+0x108>)
+ 80001d4:	f04f 42a0 	mov.w	r2, #1342177280	; 0x50000000
+ 80001d8:	601a      	str	r2, [r3, #0]
+	GPIOD->MODER= GPIOD->MODER|1<<28;
+ 80001da:	4b3d      	ldr	r3, [pc, #244]	; (80002d0 <main+0x108>)
+ 80001dc:	681b      	ldr	r3, [r3, #0]
+ 80001de:	4a3c      	ldr	r2, [pc, #240]	; (80002d0 <main+0x108>)
+ 80001e0:	f043 5380 	orr.w	r3, r3, #268435456	; 0x10000000
+ 80001e4:	6013      	str	r3, [r2, #0]
+	GPIOD->MODER= GPIOD->MODER|1<<26;
+ 80001e6:	4b3a      	ldr	r3, [pc, #232]	; (80002d0 <main+0x108>)
+ 80001e8:	681b      	ldr	r3, [r3, #0]
+ 80001ea:	4a39      	ldr	r2, [pc, #228]	; (80002d0 <main+0x108>)
+ 80001ec:	f043 6380 	orr.w	r3, r3, #67108864	; 0x4000000
+ 80001f0:	6013      	str	r3, [r2, #0]
+
+	//ismim 6 kere//
+	GPIOD->ODR|=1<<15;
+ 80001f2:	4b37      	ldr	r3, [pc, #220]	; (80002d0 <main+0x108>)
+ 80001f4:	695b      	ldr	r3, [r3, #20]
+ 80001f6:	4a36      	ldr	r2, [pc, #216]	; (80002d0 <main+0x108>)
+ 80001f8:	f443 4300 	orr.w	r3, r3, #32768	; 0x8000
+ 80001fc:	6153      	str	r3, [r2, #20]
+	GPIOD->ODR=0;
+ 80001fe:	4b34      	ldr	r3, [pc, #208]	; (80002d0 <main+0x108>)
+ 8000200:	2200      	movs	r2, #0
+ 8000202:	615a      	str	r2, [r3, #20]
+		GPIOD->ODR|=1<<15;
+ 8000204:	4b32      	ldr	r3, [pc, #200]	; (80002d0 <main+0x108>)
+ 8000206:	695b      	ldr	r3, [r3, #20]
+ 8000208:	4a31      	ldr	r2, [pc, #196]	; (80002d0 <main+0x108>)
+ 800020a:	f443 4300 	orr.w	r3, r3, #32768	; 0x8000
+ 800020e:	6153      	str	r3, [r2, #20]
+		GPIOD->ODR=0;
+ 8000210:	4b2f      	ldr	r3, [pc, #188]	; (80002d0 <main+0x108>)
+ 8000212:	2200      	movs	r2, #0
+ 8000214:	615a      	str	r2, [r3, #20]
+	GPIOD->ODR|=1<<15;
+ 8000216:	4b2e      	ldr	r3, [pc, #184]	; (80002d0 <main+0x108>)
+ 8000218:	695b      	ldr	r3, [r3, #20]
+ 800021a:	4a2d      	ldr	r2, [pc, #180]	; (80002d0 <main+0x108>)
+ 800021c:	f443 4300 	orr.w	r3, r3, #32768	; 0x8000
+ 8000220:	6153      	str	r3, [r2, #20]
+	GPIOD->ODR=0;
+ 8000222:	4b2b      	ldr	r3, [pc, #172]	; (80002d0 <main+0x108>)
+ 8000224:	2200      	movs	r2, #0
+ 8000226:	615a      	str	r2, [r3, #20]
+		GPIOD->ODR|=1<<15;
+ 8000228:	4b29      	ldr	r3, [pc, #164]	; (80002d0 <main+0x108>)
+ 800022a:	695b      	ldr	r3, [r3, #20]
+ 800022c:	4a28      	ldr	r2, [pc, #160]	; (80002d0 <main+0x108>)
+ 800022e:	f443 4300 	orr.w	r3, r3, #32768	; 0x8000
+ 8000232:	6153      	str	r3, [r2, #20]
+		GPIOD->ODR=0;
+ 8000234:	4b26      	ldr	r3, [pc, #152]	; (80002d0 <main+0x108>)
+ 8000236:	2200      	movs	r2, #0
+ 8000238:	615a      	str	r2, [r3, #20]
+	GPIOD->ODR|=1<<15;
+ 800023a:	4b25      	ldr	r3, [pc, #148]	; (80002d0 <main+0x108>)
+ 800023c:	695b      	ldr	r3, [r3, #20]
+ 800023e:	4a24      	ldr	r2, [pc, #144]	; (80002d0 <main+0x108>)
+ 8000240:	f443 4300 	orr.w	r3, r3, #32768	; 0x8000
+ 8000244:	6153      	str	r3, [r2, #20]
+	GPIOD->ODR=0;
+ 8000246:	4b22      	ldr	r3, [pc, #136]	; (80002d0 <main+0x108>)
+ 8000248:	2200      	movs	r2, #0
+ 800024a:	615a      	str	r2, [r3, #20]
+	    GPIOD->ODR|=1<<15;
+ 800024c:	4b20      	ldr	r3, [pc, #128]	; (80002d0 <main+0x108>)
+ 800024e:	695b      	ldr	r3, [r3, #20]
+ 8000250:	4a1f      	ldr	r2, [pc, #124]	; (80002d0 <main+0x108>)
+ 8000252:	f443 4300 	orr.w	r3, r3, #32768	; 0x8000
+ 8000256:	6153      	str	r3, [r2, #20]
+		GPIOD->ODR=0;
+ 8000258:	4b1d      	ldr	r3, [pc, #116]	; (80002d0 <main+0x108>)
+ 800025a:	2200      	movs	r2, #0
+ 800025c:	615a      	str	r2, [r3, #20]
+
+     //soyad 7 kere //
+	GPIOD->ODR=1<<13;
+ 800025e:	4b1c      	ldr	r3, [pc, #112]	; (80002d0 <main+0x108>)
+ 8000260:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000264:	615a      	str	r2, [r3, #20]
+	GPIOD->ODR=0;
+ 8000266:	4b1a      	ldr	r3, [pc, #104]	; (80002d0 <main+0x108>)
+ 8000268:	2200      	movs	r2, #0
+ 800026a:	615a      	str	r2, [r3, #20]
+		GPIOD->ODR=1<<13;
+ 800026c:	4b18      	ldr	r3, [pc, #96]	; (80002d0 <main+0x108>)
+ 800026e:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000272:	615a      	str	r2, [r3, #20]
+		GPIOD->ODR=0;
+ 8000274:	4b16      	ldr	r3, [pc, #88]	; (80002d0 <main+0x108>)
+ 8000276:	2200      	movs	r2, #0
+ 8000278:	615a      	str	r2, [r3, #20]
+	GPIOD->ODR=1<<13;
+ 800027a:	4b15      	ldr	r3, [pc, #84]	; (80002d0 <main+0x108>)
+ 800027c:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000280:	615a      	str	r2, [r3, #20]
+	GPIOD->ODR=0;
+ 8000282:	4b13      	ldr	r3, [pc, #76]	; (80002d0 <main+0x108>)
+ 8000284:	2200      	movs	r2, #0
+ 8000286:	615a      	str	r2, [r3, #20]
+		GPIOD->ODR=1<<13;
+ 8000288:	4b11      	ldr	r3, [pc, #68]	; (80002d0 <main+0x108>)
+ 800028a:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 800028e:	615a      	str	r2, [r3, #20]
+		GPIOD->ODR=0;
+ 8000290:	4b0f      	ldr	r3, [pc, #60]	; (80002d0 <main+0x108>)
+ 8000292:	2200      	movs	r2, #0
+ 8000294:	615a      	str	r2, [r3, #20]
+	GPIOD->ODR=1<<13;
+ 8000296:	4b0e      	ldr	r3, [pc, #56]	; (80002d0 <main+0x108>)
+ 8000298:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 800029c:	615a      	str	r2, [r3, #20]
+    GPIOD->ODR=0;
+ 800029e:	4b0c      	ldr	r3, [pc, #48]	; (80002d0 <main+0x108>)
+ 80002a0:	2200      	movs	r2, #0
+ 80002a2:	615a      	str	r2, [r3, #20]
+		GPIOD->ODR=1<<13;
+ 80002a4:	4b0a      	ldr	r3, [pc, #40]	; (80002d0 <main+0x108>)
+ 80002a6:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 80002aa:	615a      	str	r2, [r3, #20]
+		GPIOD->ODR=0;
+ 80002ac:	4b08      	ldr	r3, [pc, #32]	; (80002d0 <main+0x108>)
+ 80002ae:	2200      	movs	r2, #0
+ 80002b0:	615a      	str	r2, [r3, #20]
+	GPIOD->ODR=1<<13;
+ 80002b2:	4b07      	ldr	r3, [pc, #28]	; (80002d0 <main+0x108>)
+ 80002b4:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 80002b8:	615a      	str	r2, [r3, #20]
+	GPIOD->ODR=0;
+ 80002ba:	4b05      	ldr	r3, [pc, #20]	; (80002d0 <main+0x108>)
+ 80002bc:	2200      	movs	r2, #0
+ 80002be:	615a      	str	r2, [r3, #20]
+ 80002c0:	2300      	movs	r3, #0
+}
+ 80002c2:	4618      	mov	r0, r3
+ 80002c4:	46bd      	mov	sp, r7
+ 80002c6:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80002ca:	4770      	bx	lr
+ 80002cc:	40023800 	.word	0x40023800
+ 80002d0:	40020c00 	.word	0x40020c00
+
+080002d4 <NMI_Handler>:
+/******************************************************************************/
+/**
+  * @brief This function handles Non maskable interrupt.
+  */
+void NMI_Handler(void)
+{
+ 80002d4:	b480      	push	{r7}
+ 80002d6:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
+
+  /* USER CODE END NonMaskableInt_IRQn 0 */
+  /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
+  while (1)
+ 80002d8:	e7fe      	b.n	80002d8 <NMI_Handler+0x4>
+
+080002da <HardFault_Handler>:
+
+/**
+  * @brief This function handles Hard fault interrupt.
+  */
+void HardFault_Handler(void)
+{
+ 80002da:	b480      	push	{r7}
+ 80002dc:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN HardFault_IRQn 0 */
+
+  /* USER CODE END HardFault_IRQn 0 */
+  while (1)
+ 80002de:	e7fe      	b.n	80002de <HardFault_Handler+0x4>
+
+080002e0 <MemManage_Handler>:
+
+/**
+  * @brief This function handles Memory management fault.
+  */
+void MemManage_Handler(void)
+{
+ 80002e0:	b480      	push	{r7}
+ 80002e2:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN MemoryManagement_IRQn 0 */
+
+  /* USER CODE END MemoryManagement_IRQn 0 */
+  while (1)
+ 80002e4:	e7fe      	b.n	80002e4 <MemManage_Handler+0x4>
+
+080002e6 <BusFault_Handler>:
+
+/**
+  * @brief This function handles Pre-fetch fault, memory access fault.
+  */
+void BusFault_Handler(void)
+{
+ 80002e6:	b480      	push	{r7}
+ 80002e8:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN BusFault_IRQn 0 */
+
+  /* USER CODE END BusFault_IRQn 0 */
+  while (1)
+ 80002ea:	e7fe      	b.n	80002ea <BusFault_Handler+0x4>
+
+080002ec <UsageFault_Handler>:
+
+/**
+  * @brief This function handles Undefined instruction or illegal state.
+  */
+void UsageFault_Handler(void)
+{
+ 80002ec:	b480      	push	{r7}
+ 80002ee:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN UsageFault_IRQn 0 */
+
+  /* USER CODE END UsageFault_IRQn 0 */
+  while (1)
+ 80002f0:	e7fe      	b.n	80002f0 <UsageFault_Handler+0x4>
+
+080002f2 <SVC_Handler>:
+
+/**
+  * @brief This function handles System service call via SWI instruction.
+  */
+void SVC_Handler(void)
+{
+ 80002f2:	b480      	push	{r7}
+ 80002f4:	af00      	add	r7, sp, #0
+
+  /* USER CODE END SVCall_IRQn 0 */
+  /* USER CODE BEGIN SVCall_IRQn 1 */
+
+  /* USER CODE END SVCall_IRQn 1 */
+}
+ 80002f6:	bf00      	nop
+ 80002f8:	46bd      	mov	sp, r7
+ 80002fa:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80002fe:	4770      	bx	lr
+
+08000300 <DebugMon_Handler>:
+
+/**
+  * @brief This function handles Debug monitor.
+  */
+void DebugMon_Handler(void)
+{
+ 8000300:	b480      	push	{r7}
+ 8000302:	af00      	add	r7, sp, #0
+
+  /* USER CODE END DebugMonitor_IRQn 0 */
+  /* USER CODE BEGIN DebugMonitor_IRQn 1 */
+
+  /* USER CODE END DebugMonitor_IRQn 1 */
+}
+ 8000304:	bf00      	nop
+ 8000306:	46bd      	mov	sp, r7
+ 8000308:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 800030c:	4770      	bx	lr
+
+0800030e <PendSV_Handler>:
+
+/**
+  * @brief This function handles Pendable request for system service.
+  */
+void PendSV_Handler(void)
+{
+ 800030e:	b480      	push	{r7}
+ 8000310:	af00      	add	r7, sp, #0
+
+  /* USER CODE END PendSV_IRQn 0 */
+  /* USER CODE BEGIN PendSV_IRQn 1 */
+
+  /* USER CODE END PendSV_IRQn 1 */
+}
+ 8000312:	bf00      	nop
+ 8000314:	46bd      	mov	sp, r7
+ 8000316:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 800031a:	4770      	bx	lr
+
+0800031c <SysTick_Handler>:
+
+/**
+  * @brief This function handles System tick timer.
+  */
+void SysTick_Handler(void)
+{
+ 800031c:	b580      	push	{r7, lr}
+ 800031e:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN SysTick_IRQn 0 */
+
+  /* USER CODE END SysTick_IRQn 0 */
+  HAL_IncTick();
+ 8000320:	f000 f848 	bl	80003b4 <HAL_IncTick>
+  /* USER CODE BEGIN SysTick_IRQn 1 */
+
+  /* USER CODE END SysTick_IRQn 1 */
+}
+ 8000324:	bf00      	nop
+ 8000326:	bd80      	pop	{r7, pc}
+
+08000328 <OTG_FS_IRQHandler>:
+
+/**
+  * @brief This function handles USB On The Go FS global interrupt.
+  */
+void OTG_FS_IRQHandler(void)
+{
+ 8000328:	b580      	push	{r7, lr}
+ 800032a:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN OTG_FS_IRQn 0 */
+
+  /* USER CODE END OTG_FS_IRQn 0 */
+  HAL_HCD_IRQHandler(&hhcd_USB_OTG_FS);
+ 800032c:	4802      	ldr	r0, [pc, #8]	; (8000338 <OTG_FS_IRQHandler+0x10>)
+ 800032e:	f000 f855 	bl	80003dc <HAL_HCD_IRQHandler>
+  /* USER CODE BEGIN OTG_FS_IRQn 1 */
+
+  /* USER CODE END OTG_FS_IRQn 1 */
+}
+ 8000332:	bf00      	nop
+ 8000334:	bd80      	pop	{r7, pc}
+ 8000336:	bf00      	nop
+ 8000338:	20000024 	.word	0x20000024
+
+0800033c <SystemInit>:
+  *         configuration.
+  * @param  None
+  * @retval None
+  */
+void SystemInit(void)
+{
+ 800033c:	b480      	push	{r7}
+ 800033e:	af00      	add	r7, sp, #0
+  /* FPU settings ------------------------------------------------------------*/
+  #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
+    SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
+ 8000340:	4b06      	ldr	r3, [pc, #24]	; (800035c <SystemInit+0x20>)
+ 8000342:	f8d3 3088 	ldr.w	r3, [r3, #136]	; 0x88
+ 8000346:	4a05      	ldr	r2, [pc, #20]	; (800035c <SystemInit+0x20>)
+ 8000348:	f443 0370 	orr.w	r3, r3, #15728640	; 0xf00000
+ 800034c:	f8c2 3088 	str.w	r3, [r2, #136]	; 0x88
+
+  /* Configure the Vector Table location -------------------------------------*/
+#if defined(USER_VECT_TAB_ADDRESS)
+  SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
+#endif /* USER_VECT_TAB_ADDRESS */
+}
+ 8000350:	bf00      	nop
+ 8000352:	46bd      	mov	sp, r7
+ 8000354:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000358:	4770      	bx	lr
+ 800035a:	bf00      	nop
+ 800035c:	e000ed00 	.word	0xe000ed00
+
+08000360 <Reset_Handler>:
+
+    .section  .text.Reset_Handler
+  .weak  Reset_Handler
+  .type  Reset_Handler, %function
+Reset_Handler:  
+  ldr   sp, =_estack     /* set stack pointer */
+ 8000360:	f8df d034 	ldr.w	sp, [pc, #52]	; 8000398 <LoopFillZerobss+0x12>
+
+/* Copy the data segment initializers from flash to SRAM */  
+  ldr r0, =_sdata
+ 8000364:	480d      	ldr	r0, [pc, #52]	; (800039c <LoopFillZerobss+0x16>)
+  ldr r1, =_edata
+ 8000366:	490e      	ldr	r1, [pc, #56]	; (80003a0 <LoopFillZerobss+0x1a>)
+  ldr r2, =_sidata
+ 8000368:	4a0e      	ldr	r2, [pc, #56]	; (80003a4 <LoopFillZerobss+0x1e>)
+  movs r3, #0
+ 800036a:	2300      	movs	r3, #0
+  b LoopCopyDataInit
+ 800036c:	e002      	b.n	8000374 <LoopCopyDataInit>
+
+0800036e <CopyDataInit>:
+
+CopyDataInit:
+  ldr r4, [r2, r3]
+ 800036e:	58d4      	ldr	r4, [r2, r3]
+  str r4, [r0, r3]
+ 8000370:	50c4      	str	r4, [r0, r3]
+  adds r3, r3, #4
+ 8000372:	3304      	adds	r3, #4
+
+08000374 <LoopCopyDataInit>:
+
+LoopCopyDataInit:
+  adds r4, r0, r3
+ 8000374:	18c4      	adds	r4, r0, r3
+  cmp r4, r1
+ 8000376:	428c      	cmp	r4, r1
+  bcc CopyDataInit
+ 8000378:	d3f9      	bcc.n	800036e <CopyDataInit>
+  
+/* Zero fill the bss segment. */
+  ldr r2, =_sbss
+ 800037a:	4a0b      	ldr	r2, [pc, #44]	; (80003a8 <LoopFillZerobss+0x22>)
+  ldr r4, =_ebss
+ 800037c:	4c0b      	ldr	r4, [pc, #44]	; (80003ac <LoopFillZerobss+0x26>)
+  movs r3, #0
+ 800037e:	2300      	movs	r3, #0
+  b LoopFillZerobss
+ 8000380:	e001      	b.n	8000386 <LoopFillZerobss>
+
+08000382 <FillZerobss>:
+
+FillZerobss:
+  str  r3, [r2]
+ 8000382:	6013      	str	r3, [r2, #0]
+  adds r2, r2, #4
+ 8000384:	3204      	adds	r2, #4
+
+08000386 <LoopFillZerobss>:
+
+LoopFillZerobss:
+  cmp r2, r4
+ 8000386:	42a2      	cmp	r2, r4
+  bcc FillZerobss
+ 8000388:	d3fb      	bcc.n	8000382 <FillZerobss>
+
+/* Call the clock system initialization function.*/
+  bl  SystemInit   
+ 800038a:	f7ff ffd7 	bl	800033c <SystemInit>
+/* Call static constructors */
+    bl __libc_init_array
+ 800038e:	f001 fd63 	bl	8001e58 <__libc_init_array>
+/* Call the application's entry point.*/
+  bl  main
+ 8000392:	f7ff ff19 	bl	80001c8 <main>
+  bx  lr    
+ 8000396:	4770      	bx	lr
+  ldr   sp, =_estack     /* set stack pointer */
+ 8000398:	20020000 	.word	0x20020000
+  ldr r0, =_sdata
+ 800039c:	20000000 	.word	0x20000000
+  ldr r1, =_edata
+ 80003a0:	20000004 	.word	0x20000004
+  ldr r2, =_sidata
+ 80003a4:	08001ec0 	.word	0x08001ec0
+  ldr r2, =_sbss
+ 80003a8:	20000004 	.word	0x20000004
+  ldr r4, =_ebss
+ 80003ac:	20000328 	.word	0x20000328
+
+080003b0 <ADC_IRQHandler>:
+ * @retval None       
+*/
+    .section  .text.Default_Handler,"ax",%progbits
+Default_Handler:
+Infinite_Loop:
+  b  Infinite_Loop
+ 80003b0:	e7fe      	b.n	80003b0 <ADC_IRQHandler>
+	...
+
+080003b4 <HAL_IncTick>:
+ * @note This function is declared as __weak to be overwritten in case of other 
+  *      implementations in user file.
+  * @retval None
+  */
+__weak void HAL_IncTick(void)
+{
+ 80003b4:	b480      	push	{r7}
+ 80003b6:	af00      	add	r7, sp, #0
+  uwTick += uwTickFreq;
+ 80003b8:	4b06      	ldr	r3, [pc, #24]	; (80003d4 <HAL_IncTick+0x20>)
+ 80003ba:	781b      	ldrb	r3, [r3, #0]
+ 80003bc:	461a      	mov	r2, r3
+ 80003be:	4b06      	ldr	r3, [pc, #24]	; (80003d8 <HAL_IncTick+0x24>)
+ 80003c0:	681b      	ldr	r3, [r3, #0]
+ 80003c2:	4413      	add	r3, r2
+ 80003c4:	4a04      	ldr	r2, [pc, #16]	; (80003d8 <HAL_IncTick+0x24>)
+ 80003c6:	6013      	str	r3, [r2, #0]
+}
+ 80003c8:	bf00      	nop
+ 80003ca:	46bd      	mov	sp, r7
+ 80003cc:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80003d0:	4770      	bx	lr
+ 80003d2:	bf00      	nop
+ 80003d4:	20000000 	.word	0x20000000
+ 80003d8:	20000020 	.word	0x20000020
+
+080003dc <HAL_HCD_IRQHandler>:
+  * @brief  Handle HCD interrupt request.
+  * @param  hhcd HCD handle
+  * @retval None
+  */
+void HAL_HCD_IRQHandler(HCD_HandleTypeDef *hhcd)
+{
+ 80003dc:	b580      	push	{r7, lr}
+ 80003de:	b086      	sub	sp, #24
+ 80003e0:	af00      	add	r7, sp, #0
+ 80003e2:	6078      	str	r0, [r7, #4]
+  USB_OTG_GlobalTypeDef *USBx = hhcd->Instance;
+ 80003e4:	687b      	ldr	r3, [r7, #4]
+ 80003e6:	681b      	ldr	r3, [r3, #0]
+ 80003e8:	613b      	str	r3, [r7, #16]
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 80003ea:	693b      	ldr	r3, [r7, #16]
+ 80003ec:	60fb      	str	r3, [r7, #12]
+  uint32_t i;
+  uint32_t interrupt;
+
+  /* Ensure that we are in device mode */
+  if (USB_GetMode(hhcd->Instance) == USB_OTG_MODE_HOST)
+ 80003ee:	687b      	ldr	r3, [r7, #4]
+ 80003f0:	681b      	ldr	r3, [r3, #0]
+ 80003f2:	4618      	mov	r0, r3
+ 80003f4:	f001 fa0f 	bl	8001816 <USB_GetMode>
+ 80003f8:	4603      	mov	r3, r0
+ 80003fa:	2b01      	cmp	r3, #1
+ 80003fc:	f040 80f6 	bne.w	80005ec <HAL_HCD_IRQHandler+0x210>
+  {
+    /* Avoid spurious interrupt */
+    if (__HAL_HCD_IS_INVALID_INTERRUPT(hhcd))
+ 8000400:	687b      	ldr	r3, [r7, #4]
+ 8000402:	681b      	ldr	r3, [r3, #0]
+ 8000404:	4618      	mov	r0, r3
+ 8000406:	f001 f9f3 	bl	80017f0 <USB_ReadInterrupts>
+ 800040a:	4603      	mov	r3, r0
+ 800040c:	2b00      	cmp	r3, #0
+ 800040e:	f000 80ec 	beq.w	80005ea <HAL_HCD_IRQHandler+0x20e>
+    {
+      return;
+    }
+
+    if (__HAL_HCD_GET_FLAG(hhcd, USB_OTG_GINTSTS_PXFR_INCOMPISOOUT))
+ 8000412:	687b      	ldr	r3, [r7, #4]
+ 8000414:	681b      	ldr	r3, [r3, #0]
+ 8000416:	4618      	mov	r0, r3
+ 8000418:	f001 f9ea 	bl	80017f0 <USB_ReadInterrupts>
+ 800041c:	4603      	mov	r3, r0
+ 800041e:	f403 1300 	and.w	r3, r3, #2097152	; 0x200000
+ 8000422:	f5b3 1f00 	cmp.w	r3, #2097152	; 0x200000
+ 8000426:	d104      	bne.n	8000432 <HAL_HCD_IRQHandler+0x56>
+    {
+      /* Incorrect mode, acknowledge the interrupt */
+      __HAL_HCD_CLEAR_FLAG(hhcd, USB_OTG_GINTSTS_PXFR_INCOMPISOOUT);
+ 8000428:	687b      	ldr	r3, [r7, #4]
+ 800042a:	681b      	ldr	r3, [r3, #0]
+ 800042c:	f44f 1200 	mov.w	r2, #2097152	; 0x200000
+ 8000430:	615a      	str	r2, [r3, #20]
+    }
+
+    if (__HAL_HCD_GET_FLAG(hhcd, USB_OTG_GINTSTS_IISOIXFR))
+ 8000432:	687b      	ldr	r3, [r7, #4]
+ 8000434:	681b      	ldr	r3, [r3, #0]
+ 8000436:	4618      	mov	r0, r3
+ 8000438:	f001 f9da 	bl	80017f0 <USB_ReadInterrupts>
+ 800043c:	4603      	mov	r3, r0
+ 800043e:	f403 1380 	and.w	r3, r3, #1048576	; 0x100000
+ 8000442:	f5b3 1f80 	cmp.w	r3, #1048576	; 0x100000
+ 8000446:	d104      	bne.n	8000452 <HAL_HCD_IRQHandler+0x76>
+    {
+      /* Incorrect mode, acknowledge the interrupt */
+      __HAL_HCD_CLEAR_FLAG(hhcd, USB_OTG_GINTSTS_IISOIXFR);
+ 8000448:	687b      	ldr	r3, [r7, #4]
+ 800044a:	681b      	ldr	r3, [r3, #0]
+ 800044c:	f44f 1280 	mov.w	r2, #1048576	; 0x100000
+ 8000450:	615a      	str	r2, [r3, #20]
+    }
+
+    if (__HAL_HCD_GET_FLAG(hhcd, USB_OTG_GINTSTS_PTXFE))
+ 8000452:	687b      	ldr	r3, [r7, #4]
+ 8000454:	681b      	ldr	r3, [r3, #0]
+ 8000456:	4618      	mov	r0, r3
+ 8000458:	f001 f9ca 	bl	80017f0 <USB_ReadInterrupts>
+ 800045c:	4603      	mov	r3, r0
+ 800045e:	f003 6380 	and.w	r3, r3, #67108864	; 0x4000000
+ 8000462:	f1b3 6f80 	cmp.w	r3, #67108864	; 0x4000000
+ 8000466:	d104      	bne.n	8000472 <HAL_HCD_IRQHandler+0x96>
+    {
+      /* Incorrect mode, acknowledge the interrupt */
+      __HAL_HCD_CLEAR_FLAG(hhcd, USB_OTG_GINTSTS_PTXFE);
+ 8000468:	687b      	ldr	r3, [r7, #4]
+ 800046a:	681b      	ldr	r3, [r3, #0]
+ 800046c:	f04f 6280 	mov.w	r2, #67108864	; 0x4000000
+ 8000470:	615a      	str	r2, [r3, #20]
+    }
+
+    if (__HAL_HCD_GET_FLAG(hhcd, USB_OTG_GINTSTS_MMIS))
+ 8000472:	687b      	ldr	r3, [r7, #4]
+ 8000474:	681b      	ldr	r3, [r3, #0]
+ 8000476:	4618      	mov	r0, r3
+ 8000478:	f001 f9ba 	bl	80017f0 <USB_ReadInterrupts>
+ 800047c:	4603      	mov	r3, r0
+ 800047e:	f003 0302 	and.w	r3, r3, #2
+ 8000482:	2b02      	cmp	r3, #2
+ 8000484:	d103      	bne.n	800048e <HAL_HCD_IRQHandler+0xb2>
+    {
+      /* Incorrect mode, acknowledge the interrupt */
+      __HAL_HCD_CLEAR_FLAG(hhcd, USB_OTG_GINTSTS_MMIS);
+ 8000486:	687b      	ldr	r3, [r7, #4]
+ 8000488:	681b      	ldr	r3, [r3, #0]
+ 800048a:	2202      	movs	r2, #2
+ 800048c:	615a      	str	r2, [r3, #20]
+    }
+
+    /* Handle Host Disconnect Interrupts */
+    if (__HAL_HCD_GET_FLAG(hhcd, USB_OTG_GINTSTS_DISCINT))
+ 800048e:	687b      	ldr	r3, [r7, #4]
+ 8000490:	681b      	ldr	r3, [r3, #0]
+ 8000492:	4618      	mov	r0, r3
+ 8000494:	f001 f9ac 	bl	80017f0 <USB_ReadInterrupts>
+ 8000498:	4603      	mov	r3, r0
+ 800049a:	f003 5300 	and.w	r3, r3, #536870912	; 0x20000000
+ 800049e:	f1b3 5f00 	cmp.w	r3, #536870912	; 0x20000000
+ 80004a2:	d11c      	bne.n	80004de <HAL_HCD_IRQHandler+0x102>
+    {
+      __HAL_HCD_CLEAR_FLAG(hhcd, USB_OTG_GINTSTS_DISCINT);
+ 80004a4:	687b      	ldr	r3, [r7, #4]
+ 80004a6:	681b      	ldr	r3, [r3, #0]
+ 80004a8:	f04f 5200 	mov.w	r2, #536870912	; 0x20000000
+ 80004ac:	615a      	str	r2, [r3, #20]
+
+      if ((USBx_HPRT0 & USB_OTG_HPRT_PCSTS) == 0U)
+ 80004ae:	68fb      	ldr	r3, [r7, #12]
+ 80004b0:	f503 6388 	add.w	r3, r3, #1088	; 0x440
+ 80004b4:	681b      	ldr	r3, [r3, #0]
+ 80004b6:	f003 0301 	and.w	r3, r3, #1
+ 80004ba:	2b00      	cmp	r3, #0
+ 80004bc:	d10f      	bne.n	80004de <HAL_HCD_IRQHandler+0x102>
+      {
+        /* Flush USB Fifo */
+        (void)USB_FlushTxFifo(USBx, 0x10U);
+ 80004be:	2110      	movs	r1, #16
+ 80004c0:	6938      	ldr	r0, [r7, #16]
+ 80004c2:	f001 f8d9 	bl	8001678 <USB_FlushTxFifo>
+        (void)USB_FlushRxFifo(USBx);
+ 80004c6:	6938      	ldr	r0, [r7, #16]
+ 80004c8:	f001 f90a 	bl	80016e0 <USB_FlushRxFifo>
+
+        /* Restore FS Clock */
+        (void)USB_InitFSLSPClkSel(hhcd->Instance, HCFG_48_MHZ);
+ 80004cc:	687b      	ldr	r3, [r7, #4]
+ 80004ce:	681b      	ldr	r3, [r3, #0]
+ 80004d0:	2101      	movs	r1, #1
+ 80004d2:	4618      	mov	r0, r3
+ 80004d4:	f001 f9ad 	bl	8001832 <USB_InitFSLSPClkSel>
+
+        /* Handle Host Port Disconnect Interrupt */
+#if (USE_HAL_HCD_REGISTER_CALLBACKS == 1U)
+        hhcd->DisconnectCallback(hhcd);
+#else
+        HAL_HCD_Disconnect_Callback(hhcd);
+ 80004d8:	6878      	ldr	r0, [r7, #4]
+ 80004da:	f001 fc3e 	bl	8001d5a <HAL_HCD_Disconnect_Callback>
+#endif /* USE_HAL_HCD_REGISTER_CALLBACKS */
+      }
+    }
+
+    /* Handle Host Port Interrupts */
+    if (__HAL_HCD_GET_FLAG(hhcd, USB_OTG_GINTSTS_HPRTINT))
+ 80004de:	687b      	ldr	r3, [r7, #4]
+ 80004e0:	681b      	ldr	r3, [r3, #0]
+ 80004e2:	4618      	mov	r0, r3
+ 80004e4:	f001 f984 	bl	80017f0 <USB_ReadInterrupts>
+ 80004e8:	4603      	mov	r3, r0
+ 80004ea:	f003 7380 	and.w	r3, r3, #16777216	; 0x1000000
+ 80004ee:	f1b3 7f80 	cmp.w	r3, #16777216	; 0x1000000
+ 80004f2:	d102      	bne.n	80004fa <HAL_HCD_IRQHandler+0x11e>
+    {
+      HCD_Port_IRQHandler(hhcd);
+ 80004f4:	6878      	ldr	r0, [r7, #4]
+ 80004f6:	f001 f829 	bl	800154c <HCD_Port_IRQHandler>
+    }
+
+    /* Handle Host SOF Interrupt */
+    if (__HAL_HCD_GET_FLAG(hhcd, USB_OTG_GINTSTS_SOF))
+ 80004fa:	687b      	ldr	r3, [r7, #4]
+ 80004fc:	681b      	ldr	r3, [r3, #0]
+ 80004fe:	4618      	mov	r0, r3
+ 8000500:	f001 f976 	bl	80017f0 <USB_ReadInterrupts>
+ 8000504:	4603      	mov	r3, r0
+ 8000506:	f003 0308 	and.w	r3, r3, #8
+ 800050a:	2b08      	cmp	r3, #8
+ 800050c:	d106      	bne.n	800051c <HAL_HCD_IRQHandler+0x140>
+    {
+#if (USE_HAL_HCD_REGISTER_CALLBACKS == 1U)
+      hhcd->SOFCallback(hhcd);
+#else
+      HAL_HCD_SOF_Callback(hhcd);
+ 800050e:	6878      	ldr	r0, [r7, #4]
+ 8000510:	f001 fc07 	bl	8001d22 <HAL_HCD_SOF_Callback>
+#endif /* USE_HAL_HCD_REGISTER_CALLBACKS */
+
+      __HAL_HCD_CLEAR_FLAG(hhcd, USB_OTG_GINTSTS_SOF);
+ 8000514:	687b      	ldr	r3, [r7, #4]
+ 8000516:	681b      	ldr	r3, [r3, #0]
+ 8000518:	2208      	movs	r2, #8
+ 800051a:	615a      	str	r2, [r3, #20]
+    }
+
+    /* Handle Rx Queue Level Interrupts */
+    if ((__HAL_HCD_GET_FLAG(hhcd, USB_OTG_GINTSTS_RXFLVL)) != 0U)
+ 800051c:	687b      	ldr	r3, [r7, #4]
+ 800051e:	681b      	ldr	r3, [r3, #0]
+ 8000520:	4618      	mov	r0, r3
+ 8000522:	f001 f965 	bl	80017f0 <USB_ReadInterrupts>
+ 8000526:	4603      	mov	r3, r0
+ 8000528:	f003 0310 	and.w	r3, r3, #16
+ 800052c:	2b10      	cmp	r3, #16
+ 800052e:	d101      	bne.n	8000534 <HAL_HCD_IRQHandler+0x158>
+ 8000530:	2301      	movs	r3, #1
+ 8000532:	e000      	b.n	8000536 <HAL_HCD_IRQHandler+0x15a>
+ 8000534:	2300      	movs	r3, #0
+ 8000536:	2b00      	cmp	r3, #0
+ 8000538:	d012      	beq.n	8000560 <HAL_HCD_IRQHandler+0x184>
+    {
+      USB_MASK_INTERRUPT(hhcd->Instance, USB_OTG_GINTSTS_RXFLVL);
+ 800053a:	687b      	ldr	r3, [r7, #4]
+ 800053c:	681b      	ldr	r3, [r3, #0]
+ 800053e:	699a      	ldr	r2, [r3, #24]
+ 8000540:	687b      	ldr	r3, [r7, #4]
+ 8000542:	681b      	ldr	r3, [r3, #0]
+ 8000544:	f022 0210 	bic.w	r2, r2, #16
+ 8000548:	619a      	str	r2, [r3, #24]
+
+      HCD_RXQLVL_IRQHandler(hhcd);
+ 800054a:	6878      	ldr	r0, [r7, #4]
+ 800054c:	f000 ff2c 	bl	80013a8 <HCD_RXQLVL_IRQHandler>
+
+      USB_UNMASK_INTERRUPT(hhcd->Instance, USB_OTG_GINTSTS_RXFLVL);
+ 8000550:	687b      	ldr	r3, [r7, #4]
+ 8000552:	681b      	ldr	r3, [r3, #0]
+ 8000554:	699a      	ldr	r2, [r3, #24]
+ 8000556:	687b      	ldr	r3, [r7, #4]
+ 8000558:	681b      	ldr	r3, [r3, #0]
+ 800055a:	f042 0210 	orr.w	r2, r2, #16
+ 800055e:	619a      	str	r2, [r3, #24]
+    }
+
+    /* Handle Host channel Interrupt */
+    if (__HAL_HCD_GET_FLAG(hhcd, USB_OTG_GINTSTS_HCINT))
+ 8000560:	687b      	ldr	r3, [r7, #4]
+ 8000562:	681b      	ldr	r3, [r3, #0]
+ 8000564:	4618      	mov	r0, r3
+ 8000566:	f001 f943 	bl	80017f0 <USB_ReadInterrupts>
+ 800056a:	4603      	mov	r3, r0
+ 800056c:	f003 7300 	and.w	r3, r3, #33554432	; 0x2000000
+ 8000570:	f1b3 7f00 	cmp.w	r3, #33554432	; 0x2000000
+ 8000574:	d13a      	bne.n	80005ec <HAL_HCD_IRQHandler+0x210>
+    {
+      interrupt = USB_HC_ReadInterrupt(hhcd->Instance);
+ 8000576:	687b      	ldr	r3, [r7, #4]
+ 8000578:	681b      	ldr	r3, [r3, #0]
+ 800057a:	4618      	mov	r0, r3
+ 800057c:	f001 f993 	bl	80018a6 <USB_HC_ReadInterrupt>
+ 8000580:	60b8      	str	r0, [r7, #8]
+      for (i = 0U; i < hhcd->Init.Host_channels; i++)
+ 8000582:	2300      	movs	r3, #0
+ 8000584:	617b      	str	r3, [r7, #20]
+ 8000586:	e025      	b.n	80005d4 <HAL_HCD_IRQHandler+0x1f8>
+      {
+        if ((interrupt & (1UL << (i & 0xFU))) != 0U)
+ 8000588:	697b      	ldr	r3, [r7, #20]
+ 800058a:	f003 030f 	and.w	r3, r3, #15
+ 800058e:	68ba      	ldr	r2, [r7, #8]
+ 8000590:	fa22 f303 	lsr.w	r3, r2, r3
+ 8000594:	f003 0301 	and.w	r3, r3, #1
+ 8000598:	2b00      	cmp	r3, #0
+ 800059a:	d018      	beq.n	80005ce <HAL_HCD_IRQHandler+0x1f2>
+        {
+          if ((USBx_HC(i)->HCCHAR & USB_OTG_HCCHAR_EPDIR) == USB_OTG_HCCHAR_EPDIR)
+ 800059c:	697b      	ldr	r3, [r7, #20]
+ 800059e:	015a      	lsls	r2, r3, #5
+ 80005a0:	68fb      	ldr	r3, [r7, #12]
+ 80005a2:	4413      	add	r3, r2
+ 80005a4:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80005a8:	681b      	ldr	r3, [r3, #0]
+ 80005aa:	f403 4300 	and.w	r3, r3, #32768	; 0x8000
+ 80005ae:	f5b3 4f00 	cmp.w	r3, #32768	; 0x8000
+ 80005b2:	d106      	bne.n	80005c2 <HAL_HCD_IRQHandler+0x1e6>
+          {
+            HCD_HC_IN_IRQHandler(hhcd, (uint8_t)i);
+ 80005b4:	697b      	ldr	r3, [r7, #20]
+ 80005b6:	b2db      	uxtb	r3, r3
+ 80005b8:	4619      	mov	r1, r3
+ 80005ba:	6878      	ldr	r0, [r7, #4]
+ 80005bc:	f000 f836 	bl	800062c <HCD_HC_IN_IRQHandler>
+ 80005c0:	e005      	b.n	80005ce <HAL_HCD_IRQHandler+0x1f2>
+          }
+          else
+          {
+            HCD_HC_OUT_IRQHandler(hhcd, (uint8_t)i);
+ 80005c2:	697b      	ldr	r3, [r7, #20]
+ 80005c4:	b2db      	uxtb	r3, r3
+ 80005c6:	4619      	mov	r1, r3
+ 80005c8:	6878      	ldr	r0, [r7, #4]
+ 80005ca:	f000 fb84 	bl	8000cd6 <HCD_HC_OUT_IRQHandler>
+      for (i = 0U; i < hhcd->Init.Host_channels; i++)
+ 80005ce:	697b      	ldr	r3, [r7, #20]
+ 80005d0:	3301      	adds	r3, #1
+ 80005d2:	617b      	str	r3, [r7, #20]
+ 80005d4:	687b      	ldr	r3, [r7, #4]
+ 80005d6:	689b      	ldr	r3, [r3, #8]
+ 80005d8:	697a      	ldr	r2, [r7, #20]
+ 80005da:	429a      	cmp	r2, r3
+ 80005dc:	d3d4      	bcc.n	8000588 <HAL_HCD_IRQHandler+0x1ac>
+          }
+        }
+      }
+      __HAL_HCD_CLEAR_FLAG(hhcd, USB_OTG_GINTSTS_HCINT);
+ 80005de:	687b      	ldr	r3, [r7, #4]
+ 80005e0:	681b      	ldr	r3, [r3, #0]
+ 80005e2:	f04f 7200 	mov.w	r2, #33554432	; 0x2000000
+ 80005e6:	615a      	str	r2, [r3, #20]
+ 80005e8:	e000      	b.n	80005ec <HAL_HCD_IRQHandler+0x210>
+      return;
+ 80005ea:	bf00      	nop
+    }
+  }
+}
+ 80005ec:	3718      	adds	r7, #24
+ 80005ee:	46bd      	mov	sp, r7
+ 80005f0:	bd80      	pop	{r7, pc}
+
+080005f2 <HAL_HCD_Stop>:
+  * @param  hhcd HCD handle
+  * @retval HAL status
+  */
+
+HAL_StatusTypeDef HAL_HCD_Stop(HCD_HandleTypeDef *hhcd)
+{
+ 80005f2:	b580      	push	{r7, lr}
+ 80005f4:	b082      	sub	sp, #8
+ 80005f6:	af00      	add	r7, sp, #0
+ 80005f8:	6078      	str	r0, [r7, #4]
+  __HAL_LOCK(hhcd);
+ 80005fa:	687b      	ldr	r3, [r7, #4]
+ 80005fc:	f893 32f8 	ldrb.w	r3, [r3, #760]	; 0x2f8
+ 8000600:	2b01      	cmp	r3, #1
+ 8000602:	d101      	bne.n	8000608 <HAL_HCD_Stop+0x16>
+ 8000604:	2302      	movs	r3, #2
+ 8000606:	e00d      	b.n	8000624 <HAL_HCD_Stop+0x32>
+ 8000608:	687b      	ldr	r3, [r7, #4]
+ 800060a:	2201      	movs	r2, #1
+ 800060c:	f883 22f8 	strb.w	r2, [r3, #760]	; 0x2f8
+  (void)USB_StopHost(hhcd->Instance);
+ 8000610:	687b      	ldr	r3, [r7, #4]
+ 8000612:	681b      	ldr	r3, [r3, #0]
+ 8000614:	4618      	mov	r0, r3
+ 8000616:	f001 fa53 	bl	8001ac0 <USB_StopHost>
+  __HAL_UNLOCK(hhcd);
+ 800061a:	687b      	ldr	r3, [r7, #4]
+ 800061c:	2200      	movs	r2, #0
+ 800061e:	f883 22f8 	strb.w	r2, [r3, #760]	; 0x2f8
+
+  return HAL_OK;
+ 8000622:	2300      	movs	r3, #0
+}
+ 8000624:	4618      	mov	r0, r3
+ 8000626:	3708      	adds	r7, #8
+ 8000628:	46bd      	mov	sp, r7
+ 800062a:	bd80      	pop	{r7, pc}
+
+0800062c <HCD_HC_IN_IRQHandler>:
+  * @param  chnum Channel number.
+  *         This parameter can be a value from 1 to 15
+  * @retval none
+  */
+static void HCD_HC_IN_IRQHandler(HCD_HandleTypeDef *hhcd, uint8_t chnum)
+{
+ 800062c:	b580      	push	{r7, lr}
+ 800062e:	b086      	sub	sp, #24
+ 8000630:	af00      	add	r7, sp, #0
+ 8000632:	6078      	str	r0, [r7, #4]
+ 8000634:	460b      	mov	r3, r1
+ 8000636:	70fb      	strb	r3, [r7, #3]
+  USB_OTG_GlobalTypeDef *USBx = hhcd->Instance;
+ 8000638:	687b      	ldr	r3, [r7, #4]
+ 800063a:	681b      	ldr	r3, [r3, #0]
+ 800063c:	617b      	str	r3, [r7, #20]
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 800063e:	697b      	ldr	r3, [r7, #20]
+ 8000640:	613b      	str	r3, [r7, #16]
+  uint32_t ch_num = (uint32_t)chnum;
+ 8000642:	78fb      	ldrb	r3, [r7, #3]
+ 8000644:	60fb      	str	r3, [r7, #12]
+
+  uint32_t tmpreg;
+
+  if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_AHBERR) == USB_OTG_HCINT_AHBERR)
+ 8000646:	68fb      	ldr	r3, [r7, #12]
+ 8000648:	015a      	lsls	r2, r3, #5
+ 800064a:	693b      	ldr	r3, [r7, #16]
+ 800064c:	4413      	add	r3, r2
+ 800064e:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000652:	689b      	ldr	r3, [r3, #8]
+ 8000654:	f003 0304 	and.w	r3, r3, #4
+ 8000658:	2b04      	cmp	r3, #4
+ 800065a:	d11a      	bne.n	8000692 <HCD_HC_IN_IRQHandler+0x66>
+  {
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_AHBERR);
+ 800065c:	68fb      	ldr	r3, [r7, #12]
+ 800065e:	015a      	lsls	r2, r3, #5
+ 8000660:	693b      	ldr	r3, [r7, #16]
+ 8000662:	4413      	add	r3, r2
+ 8000664:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000668:	461a      	mov	r2, r3
+ 800066a:	2304      	movs	r3, #4
+ 800066c:	6093      	str	r3, [r2, #8]
+    hhcd->hc[ch_num].state = HC_XACTERR;
+ 800066e:	687a      	ldr	r2, [r7, #4]
+ 8000670:	68fb      	ldr	r3, [r7, #12]
+ 8000672:	212c      	movs	r1, #44	; 0x2c
+ 8000674:	fb01 f303 	mul.w	r3, r1, r3
+ 8000678:	4413      	add	r3, r2
+ 800067a:	3361      	adds	r3, #97	; 0x61
+ 800067c:	2206      	movs	r2, #6
+ 800067e:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000680:	687b      	ldr	r3, [r7, #4]
+ 8000682:	681b      	ldr	r3, [r3, #0]
+ 8000684:	68fa      	ldr	r2, [r7, #12]
+ 8000686:	b2d2      	uxtb	r2, r2
+ 8000688:	4611      	mov	r1, r2
+ 800068a:	4618      	mov	r0, r3
+ 800068c:	f001 f91c 	bl	80018c8 <USB_HC_Halt>
+ 8000690:	e0af      	b.n	80007f2 <HCD_HC_IN_IRQHandler+0x1c6>
+  }
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_BBERR) == USB_OTG_HCINT_BBERR)
+ 8000692:	68fb      	ldr	r3, [r7, #12]
+ 8000694:	015a      	lsls	r2, r3, #5
+ 8000696:	693b      	ldr	r3, [r7, #16]
+ 8000698:	4413      	add	r3, r2
+ 800069a:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800069e:	689b      	ldr	r3, [r3, #8]
+ 80006a0:	f403 7380 	and.w	r3, r3, #256	; 0x100
+ 80006a4:	f5b3 7f80 	cmp.w	r3, #256	; 0x100
+ 80006a8:	d11b      	bne.n	80006e2 <HCD_HC_IN_IRQHandler+0xb6>
+  {
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_BBERR);
+ 80006aa:	68fb      	ldr	r3, [r7, #12]
+ 80006ac:	015a      	lsls	r2, r3, #5
+ 80006ae:	693b      	ldr	r3, [r7, #16]
+ 80006b0:	4413      	add	r3, r2
+ 80006b2:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80006b6:	461a      	mov	r2, r3
+ 80006b8:	f44f 7380 	mov.w	r3, #256	; 0x100
+ 80006bc:	6093      	str	r3, [r2, #8]
+    hhcd->hc[ch_num].state = HC_BBLERR;
+ 80006be:	687a      	ldr	r2, [r7, #4]
+ 80006c0:	68fb      	ldr	r3, [r7, #12]
+ 80006c2:	212c      	movs	r1, #44	; 0x2c
+ 80006c4:	fb01 f303 	mul.w	r3, r1, r3
+ 80006c8:	4413      	add	r3, r2
+ 80006ca:	3361      	adds	r3, #97	; 0x61
+ 80006cc:	2207      	movs	r2, #7
+ 80006ce:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 80006d0:	687b      	ldr	r3, [r7, #4]
+ 80006d2:	681b      	ldr	r3, [r3, #0]
+ 80006d4:	68fa      	ldr	r2, [r7, #12]
+ 80006d6:	b2d2      	uxtb	r2, r2
+ 80006d8:	4611      	mov	r1, r2
+ 80006da:	4618      	mov	r0, r3
+ 80006dc:	f001 f8f4 	bl	80018c8 <USB_HC_Halt>
+ 80006e0:	e087      	b.n	80007f2 <HCD_HC_IN_IRQHandler+0x1c6>
+  }
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_ACK) == USB_OTG_HCINT_ACK)
+ 80006e2:	68fb      	ldr	r3, [r7, #12]
+ 80006e4:	015a      	lsls	r2, r3, #5
+ 80006e6:	693b      	ldr	r3, [r7, #16]
+ 80006e8:	4413      	add	r3, r2
+ 80006ea:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80006ee:	689b      	ldr	r3, [r3, #8]
+ 80006f0:	f003 0320 	and.w	r3, r3, #32
+ 80006f4:	2b20      	cmp	r3, #32
+ 80006f6:	d109      	bne.n	800070c <HCD_HC_IN_IRQHandler+0xe0>
+  {
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_ACK);
+ 80006f8:	68fb      	ldr	r3, [r7, #12]
+ 80006fa:	015a      	lsls	r2, r3, #5
+ 80006fc:	693b      	ldr	r3, [r7, #16]
+ 80006fe:	4413      	add	r3, r2
+ 8000700:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000704:	461a      	mov	r2, r3
+ 8000706:	2320      	movs	r3, #32
+ 8000708:	6093      	str	r3, [r2, #8]
+ 800070a:	e072      	b.n	80007f2 <HCD_HC_IN_IRQHandler+0x1c6>
+  }
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_STALL) == USB_OTG_HCINT_STALL)
+ 800070c:	68fb      	ldr	r3, [r7, #12]
+ 800070e:	015a      	lsls	r2, r3, #5
+ 8000710:	693b      	ldr	r3, [r7, #16]
+ 8000712:	4413      	add	r3, r2
+ 8000714:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000718:	689b      	ldr	r3, [r3, #8]
+ 800071a:	f003 0308 	and.w	r3, r3, #8
+ 800071e:	2b08      	cmp	r3, #8
+ 8000720:	d11a      	bne.n	8000758 <HCD_HC_IN_IRQHandler+0x12c>
+  {
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_STALL);
+ 8000722:	68fb      	ldr	r3, [r7, #12]
+ 8000724:	015a      	lsls	r2, r3, #5
+ 8000726:	693b      	ldr	r3, [r7, #16]
+ 8000728:	4413      	add	r3, r2
+ 800072a:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800072e:	461a      	mov	r2, r3
+ 8000730:	2308      	movs	r3, #8
+ 8000732:	6093      	str	r3, [r2, #8]
+    hhcd->hc[ch_num].state = HC_STALL;
+ 8000734:	687a      	ldr	r2, [r7, #4]
+ 8000736:	68fb      	ldr	r3, [r7, #12]
+ 8000738:	212c      	movs	r1, #44	; 0x2c
+ 800073a:	fb01 f303 	mul.w	r3, r1, r3
+ 800073e:	4413      	add	r3, r2
+ 8000740:	3361      	adds	r3, #97	; 0x61
+ 8000742:	2205      	movs	r2, #5
+ 8000744:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000746:	687b      	ldr	r3, [r7, #4]
+ 8000748:	681b      	ldr	r3, [r3, #0]
+ 800074a:	68fa      	ldr	r2, [r7, #12]
+ 800074c:	b2d2      	uxtb	r2, r2
+ 800074e:	4611      	mov	r1, r2
+ 8000750:	4618      	mov	r0, r3
+ 8000752:	f001 f8b9 	bl	80018c8 <USB_HC_Halt>
+ 8000756:	e04c      	b.n	80007f2 <HCD_HC_IN_IRQHandler+0x1c6>
+  }
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_DTERR) == USB_OTG_HCINT_DTERR)
+ 8000758:	68fb      	ldr	r3, [r7, #12]
+ 800075a:	015a      	lsls	r2, r3, #5
+ 800075c:	693b      	ldr	r3, [r7, #16]
+ 800075e:	4413      	add	r3, r2
+ 8000760:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000764:	689b      	ldr	r3, [r3, #8]
+ 8000766:	f403 6380 	and.w	r3, r3, #1024	; 0x400
+ 800076a:	f5b3 6f80 	cmp.w	r3, #1024	; 0x400
+ 800076e:	d11b      	bne.n	80007a8 <HCD_HC_IN_IRQHandler+0x17c>
+  {
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_DTERR);
+ 8000770:	68fb      	ldr	r3, [r7, #12]
+ 8000772:	015a      	lsls	r2, r3, #5
+ 8000774:	693b      	ldr	r3, [r7, #16]
+ 8000776:	4413      	add	r3, r2
+ 8000778:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800077c:	461a      	mov	r2, r3
+ 800077e:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 8000782:	6093      	str	r3, [r2, #8]
+    hhcd->hc[ch_num].state = HC_DATATGLERR;
+ 8000784:	687a      	ldr	r2, [r7, #4]
+ 8000786:	68fb      	ldr	r3, [r7, #12]
+ 8000788:	212c      	movs	r1, #44	; 0x2c
+ 800078a:	fb01 f303 	mul.w	r3, r1, r3
+ 800078e:	4413      	add	r3, r2
+ 8000790:	3361      	adds	r3, #97	; 0x61
+ 8000792:	2208      	movs	r2, #8
+ 8000794:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000796:	687b      	ldr	r3, [r7, #4]
+ 8000798:	681b      	ldr	r3, [r3, #0]
+ 800079a:	68fa      	ldr	r2, [r7, #12]
+ 800079c:	b2d2      	uxtb	r2, r2
+ 800079e:	4611      	mov	r1, r2
+ 80007a0:	4618      	mov	r0, r3
+ 80007a2:	f001 f891 	bl	80018c8 <USB_HC_Halt>
+ 80007a6:	e024      	b.n	80007f2 <HCD_HC_IN_IRQHandler+0x1c6>
+  }
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_TXERR) == USB_OTG_HCINT_TXERR)
+ 80007a8:	68fb      	ldr	r3, [r7, #12]
+ 80007aa:	015a      	lsls	r2, r3, #5
+ 80007ac:	693b      	ldr	r3, [r7, #16]
+ 80007ae:	4413      	add	r3, r2
+ 80007b0:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80007b4:	689b      	ldr	r3, [r3, #8]
+ 80007b6:	f003 0380 	and.w	r3, r3, #128	; 0x80
+ 80007ba:	2b80      	cmp	r3, #128	; 0x80
+ 80007bc:	d119      	bne.n	80007f2 <HCD_HC_IN_IRQHandler+0x1c6>
+  {
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_TXERR);
+ 80007be:	68fb      	ldr	r3, [r7, #12]
+ 80007c0:	015a      	lsls	r2, r3, #5
+ 80007c2:	693b      	ldr	r3, [r7, #16]
+ 80007c4:	4413      	add	r3, r2
+ 80007c6:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80007ca:	461a      	mov	r2, r3
+ 80007cc:	2380      	movs	r3, #128	; 0x80
+ 80007ce:	6093      	str	r3, [r2, #8]
+    hhcd->hc[ch_num].state = HC_XACTERR;
+ 80007d0:	687a      	ldr	r2, [r7, #4]
+ 80007d2:	68fb      	ldr	r3, [r7, #12]
+ 80007d4:	212c      	movs	r1, #44	; 0x2c
+ 80007d6:	fb01 f303 	mul.w	r3, r1, r3
+ 80007da:	4413      	add	r3, r2
+ 80007dc:	3361      	adds	r3, #97	; 0x61
+ 80007de:	2206      	movs	r2, #6
+ 80007e0:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 80007e2:	687b      	ldr	r3, [r7, #4]
+ 80007e4:	681b      	ldr	r3, [r3, #0]
+ 80007e6:	68fa      	ldr	r2, [r7, #12]
+ 80007e8:	b2d2      	uxtb	r2, r2
+ 80007ea:	4611      	mov	r1, r2
+ 80007ec:	4618      	mov	r0, r3
+ 80007ee:	f001 f86b 	bl	80018c8 <USB_HC_Halt>
+  else
+  {
+    /* ... */
+  }
+
+  if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_FRMOR) == USB_OTG_HCINT_FRMOR)
+ 80007f2:	68fb      	ldr	r3, [r7, #12]
+ 80007f4:	015a      	lsls	r2, r3, #5
+ 80007f6:	693b      	ldr	r3, [r7, #16]
+ 80007f8:	4413      	add	r3, r2
+ 80007fa:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80007fe:	689b      	ldr	r3, [r3, #8]
+ 8000800:	f403 7300 	and.w	r3, r3, #512	; 0x200
+ 8000804:	f5b3 7f00 	cmp.w	r3, #512	; 0x200
+ 8000808:	d112      	bne.n	8000830 <HCD_HC_IN_IRQHandler+0x204>
+  {
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 800080a:	687b      	ldr	r3, [r7, #4]
+ 800080c:	681b      	ldr	r3, [r3, #0]
+ 800080e:	68fa      	ldr	r2, [r7, #12]
+ 8000810:	b2d2      	uxtb	r2, r2
+ 8000812:	4611      	mov	r1, r2
+ 8000814:	4618      	mov	r0, r3
+ 8000816:	f001 f857 	bl	80018c8 <USB_HC_Halt>
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_FRMOR);
+ 800081a:	68fb      	ldr	r3, [r7, #12]
+ 800081c:	015a      	lsls	r2, r3, #5
+ 800081e:	693b      	ldr	r3, [r7, #16]
+ 8000820:	4413      	add	r3, r2
+ 8000822:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000826:	461a      	mov	r2, r3
+ 8000828:	f44f 7300 	mov.w	r3, #512	; 0x200
+ 800082c:	6093      	str	r3, [r2, #8]
+  }
+  else
+  {
+    /* ... */
+  }
+}
+ 800082e:	e24e      	b.n	8000cce <HCD_HC_IN_IRQHandler+0x6a2>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_XFRC) == USB_OTG_HCINT_XFRC)
+ 8000830:	68fb      	ldr	r3, [r7, #12]
+ 8000832:	015a      	lsls	r2, r3, #5
+ 8000834:	693b      	ldr	r3, [r7, #16]
+ 8000836:	4413      	add	r3, r2
+ 8000838:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800083c:	689b      	ldr	r3, [r3, #8]
+ 800083e:	f003 0301 	and.w	r3, r3, #1
+ 8000842:	2b01      	cmp	r3, #1
+ 8000844:	f040 80df 	bne.w	8000a06 <HCD_HC_IN_IRQHandler+0x3da>
+    if (hhcd->Init.dma_enable != 0U)
+ 8000848:	687b      	ldr	r3, [r7, #4]
+ 800084a:	691b      	ldr	r3, [r3, #16]
+ 800084c:	2b00      	cmp	r3, #0
+ 800084e:	d019      	beq.n	8000884 <HCD_HC_IN_IRQHandler+0x258>
+      hhcd->hc[ch_num].xfer_count = hhcd->hc[ch_num].XferSize - \
+ 8000850:	687a      	ldr	r2, [r7, #4]
+ 8000852:	68fb      	ldr	r3, [r7, #12]
+ 8000854:	212c      	movs	r1, #44	; 0x2c
+ 8000856:	fb01 f303 	mul.w	r3, r1, r3
+ 800085a:	4413      	add	r3, r2
+ 800085c:	3348      	adds	r3, #72	; 0x48
+ 800085e:	681a      	ldr	r2, [r3, #0]
+                                    (USBx_HC(ch_num)->HCTSIZ & USB_OTG_HCTSIZ_XFRSIZ);
+ 8000860:	68fb      	ldr	r3, [r7, #12]
+ 8000862:	0159      	lsls	r1, r3, #5
+ 8000864:	693b      	ldr	r3, [r7, #16]
+ 8000866:	440b      	add	r3, r1
+ 8000868:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800086c:	691b      	ldr	r3, [r3, #16]
+ 800086e:	f3c3 0312 	ubfx	r3, r3, #0, #19
+      hhcd->hc[ch_num].xfer_count = hhcd->hc[ch_num].XferSize - \
+ 8000872:	1ad2      	subs	r2, r2, r3
+ 8000874:	6879      	ldr	r1, [r7, #4]
+ 8000876:	68fb      	ldr	r3, [r7, #12]
+ 8000878:	202c      	movs	r0, #44	; 0x2c
+ 800087a:	fb00 f303 	mul.w	r3, r0, r3
+ 800087e:	440b      	add	r3, r1
+ 8000880:	3350      	adds	r3, #80	; 0x50
+ 8000882:	601a      	str	r2, [r3, #0]
+    hhcd->hc[ch_num].state = HC_XFRC;
+ 8000884:	687a      	ldr	r2, [r7, #4]
+ 8000886:	68fb      	ldr	r3, [r7, #12]
+ 8000888:	212c      	movs	r1, #44	; 0x2c
+ 800088a:	fb01 f303 	mul.w	r3, r1, r3
+ 800088e:	4413      	add	r3, r2
+ 8000890:	3361      	adds	r3, #97	; 0x61
+ 8000892:	2201      	movs	r2, #1
+ 8000894:	701a      	strb	r2, [r3, #0]
+    hhcd->hc[ch_num].ErrCnt = 0U;
+ 8000896:	687a      	ldr	r2, [r7, #4]
+ 8000898:	68fb      	ldr	r3, [r7, #12]
+ 800089a:	212c      	movs	r1, #44	; 0x2c
+ 800089c:	fb01 f303 	mul.w	r3, r1, r3
+ 80008a0:	4413      	add	r3, r2
+ 80008a2:	335c      	adds	r3, #92	; 0x5c
+ 80008a4:	2200      	movs	r2, #0
+ 80008a6:	601a      	str	r2, [r3, #0]
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_XFRC);
+ 80008a8:	68fb      	ldr	r3, [r7, #12]
+ 80008aa:	015a      	lsls	r2, r3, #5
+ 80008ac:	693b      	ldr	r3, [r7, #16]
+ 80008ae:	4413      	add	r3, r2
+ 80008b0:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80008b4:	461a      	mov	r2, r3
+ 80008b6:	2301      	movs	r3, #1
+ 80008b8:	6093      	str	r3, [r2, #8]
+    if ((hhcd->hc[ch_num].ep_type == EP_TYPE_CTRL) ||
+ 80008ba:	687a      	ldr	r2, [r7, #4]
+ 80008bc:	68fb      	ldr	r3, [r7, #12]
+ 80008be:	212c      	movs	r1, #44	; 0x2c
+ 80008c0:	fb01 f303 	mul.w	r3, r1, r3
+ 80008c4:	4413      	add	r3, r2
+ 80008c6:	333f      	adds	r3, #63	; 0x3f
+ 80008c8:	781b      	ldrb	r3, [r3, #0]
+ 80008ca:	2b00      	cmp	r3, #0
+ 80008cc:	d009      	beq.n	80008e2 <HCD_HC_IN_IRQHandler+0x2b6>
+        (hhcd->hc[ch_num].ep_type == EP_TYPE_BULK))
+ 80008ce:	687a      	ldr	r2, [r7, #4]
+ 80008d0:	68fb      	ldr	r3, [r7, #12]
+ 80008d2:	212c      	movs	r1, #44	; 0x2c
+ 80008d4:	fb01 f303 	mul.w	r3, r1, r3
+ 80008d8:	4413      	add	r3, r2
+ 80008da:	333f      	adds	r3, #63	; 0x3f
+ 80008dc:	781b      	ldrb	r3, [r3, #0]
+    if ((hhcd->hc[ch_num].ep_type == EP_TYPE_CTRL) ||
+ 80008de:	2b02      	cmp	r3, #2
+ 80008e0:	d111      	bne.n	8000906 <HCD_HC_IN_IRQHandler+0x2da>
+      (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 80008e2:	687b      	ldr	r3, [r7, #4]
+ 80008e4:	681b      	ldr	r3, [r3, #0]
+ 80008e6:	68fa      	ldr	r2, [r7, #12]
+ 80008e8:	b2d2      	uxtb	r2, r2
+ 80008ea:	4611      	mov	r1, r2
+ 80008ec:	4618      	mov	r0, r3
+ 80008ee:	f000 ffeb 	bl	80018c8 <USB_HC_Halt>
+      __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_NAK);
+ 80008f2:	68fb      	ldr	r3, [r7, #12]
+ 80008f4:	015a      	lsls	r2, r3, #5
+ 80008f6:	693b      	ldr	r3, [r7, #16]
+ 80008f8:	4413      	add	r3, r2
+ 80008fa:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80008fe:	461a      	mov	r2, r3
+ 8000900:	2310      	movs	r3, #16
+ 8000902:	6093      	str	r3, [r2, #8]
+ 8000904:	e03a      	b.n	800097c <HCD_HC_IN_IRQHandler+0x350>
+    else if ((hhcd->hc[ch_num].ep_type == EP_TYPE_INTR) ||
+ 8000906:	687a      	ldr	r2, [r7, #4]
+ 8000908:	68fb      	ldr	r3, [r7, #12]
+ 800090a:	212c      	movs	r1, #44	; 0x2c
+ 800090c:	fb01 f303 	mul.w	r3, r1, r3
+ 8000910:	4413      	add	r3, r2
+ 8000912:	333f      	adds	r3, #63	; 0x3f
+ 8000914:	781b      	ldrb	r3, [r3, #0]
+ 8000916:	2b03      	cmp	r3, #3
+ 8000918:	d009      	beq.n	800092e <HCD_HC_IN_IRQHandler+0x302>
+             (hhcd->hc[ch_num].ep_type == EP_TYPE_ISOC))
+ 800091a:	687a      	ldr	r2, [r7, #4]
+ 800091c:	68fb      	ldr	r3, [r7, #12]
+ 800091e:	212c      	movs	r1, #44	; 0x2c
+ 8000920:	fb01 f303 	mul.w	r3, r1, r3
+ 8000924:	4413      	add	r3, r2
+ 8000926:	333f      	adds	r3, #63	; 0x3f
+ 8000928:	781b      	ldrb	r3, [r3, #0]
+    else if ((hhcd->hc[ch_num].ep_type == EP_TYPE_INTR) ||
+ 800092a:	2b01      	cmp	r3, #1
+ 800092c:	d126      	bne.n	800097c <HCD_HC_IN_IRQHandler+0x350>
+      USBx_HC(ch_num)->HCCHAR |= USB_OTG_HCCHAR_ODDFRM;
+ 800092e:	68fb      	ldr	r3, [r7, #12]
+ 8000930:	015a      	lsls	r2, r3, #5
+ 8000932:	693b      	ldr	r3, [r7, #16]
+ 8000934:	4413      	add	r3, r2
+ 8000936:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800093a:	681b      	ldr	r3, [r3, #0]
+ 800093c:	68fa      	ldr	r2, [r7, #12]
+ 800093e:	0151      	lsls	r1, r2, #5
+ 8000940:	693a      	ldr	r2, [r7, #16]
+ 8000942:	440a      	add	r2, r1
+ 8000944:	f502 62a0 	add.w	r2, r2, #1280	; 0x500
+ 8000948:	f043 5300 	orr.w	r3, r3, #536870912	; 0x20000000
+ 800094c:	6013      	str	r3, [r2, #0]
+      hhcd->hc[ch_num].urb_state = URB_DONE;
+ 800094e:	687a      	ldr	r2, [r7, #4]
+ 8000950:	68fb      	ldr	r3, [r7, #12]
+ 8000952:	212c      	movs	r1, #44	; 0x2c
+ 8000954:	fb01 f303 	mul.w	r3, r1, r3
+ 8000958:	4413      	add	r3, r2
+ 800095a:	3360      	adds	r3, #96	; 0x60
+ 800095c:	2201      	movs	r2, #1
+ 800095e:	701a      	strb	r2, [r3, #0]
+      HAL_HCD_HC_NotifyURBChange_Callback(hhcd, (uint8_t)ch_num, hhcd->hc[ch_num].urb_state);
+ 8000960:	68fb      	ldr	r3, [r7, #12]
+ 8000962:	b2d9      	uxtb	r1, r3
+ 8000964:	687a      	ldr	r2, [r7, #4]
+ 8000966:	68fb      	ldr	r3, [r7, #12]
+ 8000968:	202c      	movs	r0, #44	; 0x2c
+ 800096a:	fb00 f303 	mul.w	r3, r0, r3
+ 800096e:	4413      	add	r3, r2
+ 8000970:	3360      	adds	r3, #96	; 0x60
+ 8000972:	781b      	ldrb	r3, [r3, #0]
+ 8000974:	461a      	mov	r2, r3
+ 8000976:	6878      	ldr	r0, [r7, #4]
+ 8000978:	f001 f9fd 	bl	8001d76 <HAL_HCD_HC_NotifyURBChange_Callback>
+    if (hhcd->Init.dma_enable == 1U)
+ 800097c:	687b      	ldr	r3, [r7, #4]
+ 800097e:	691b      	ldr	r3, [r3, #16]
+ 8000980:	2b01      	cmp	r3, #1
+ 8000982:	d12b      	bne.n	80009dc <HCD_HC_IN_IRQHandler+0x3b0>
+      if (((hhcd->hc[ch_num].XferSize / hhcd->hc[ch_num].max_packet) & 1U) != 0U)
+ 8000984:	687a      	ldr	r2, [r7, #4]
+ 8000986:	68fb      	ldr	r3, [r7, #12]
+ 8000988:	212c      	movs	r1, #44	; 0x2c
+ 800098a:	fb01 f303 	mul.w	r3, r1, r3
+ 800098e:	4413      	add	r3, r2
+ 8000990:	3348      	adds	r3, #72	; 0x48
+ 8000992:	681b      	ldr	r3, [r3, #0]
+ 8000994:	6879      	ldr	r1, [r7, #4]
+ 8000996:	68fa      	ldr	r2, [r7, #12]
+ 8000998:	202c      	movs	r0, #44	; 0x2c
+ 800099a:	fb00 f202 	mul.w	r2, r0, r2
+ 800099e:	440a      	add	r2, r1
+ 80009a0:	3240      	adds	r2, #64	; 0x40
+ 80009a2:	8812      	ldrh	r2, [r2, #0]
+ 80009a4:	fbb3 f3f2 	udiv	r3, r3, r2
+ 80009a8:	f003 0301 	and.w	r3, r3, #1
+ 80009ac:	2b00      	cmp	r3, #0
+ 80009ae:	f000 818e 	beq.w	8000cce <HCD_HC_IN_IRQHandler+0x6a2>
+        hhcd->hc[ch_num].toggle_in ^= 1U;
+ 80009b2:	687a      	ldr	r2, [r7, #4]
+ 80009b4:	68fb      	ldr	r3, [r7, #12]
+ 80009b6:	212c      	movs	r1, #44	; 0x2c
+ 80009b8:	fb01 f303 	mul.w	r3, r1, r3
+ 80009bc:	4413      	add	r3, r2
+ 80009be:	3354      	adds	r3, #84	; 0x54
+ 80009c0:	781b      	ldrb	r3, [r3, #0]
+ 80009c2:	f083 0301 	eor.w	r3, r3, #1
+ 80009c6:	b2d8      	uxtb	r0, r3
+ 80009c8:	687a      	ldr	r2, [r7, #4]
+ 80009ca:	68fb      	ldr	r3, [r7, #12]
+ 80009cc:	212c      	movs	r1, #44	; 0x2c
+ 80009ce:	fb01 f303 	mul.w	r3, r1, r3
+ 80009d2:	4413      	add	r3, r2
+ 80009d4:	3354      	adds	r3, #84	; 0x54
+ 80009d6:	4602      	mov	r2, r0
+ 80009d8:	701a      	strb	r2, [r3, #0]
+}
+ 80009da:	e178      	b.n	8000cce <HCD_HC_IN_IRQHandler+0x6a2>
+      hhcd->hc[ch_num].toggle_in ^= 1U;
+ 80009dc:	687a      	ldr	r2, [r7, #4]
+ 80009de:	68fb      	ldr	r3, [r7, #12]
+ 80009e0:	212c      	movs	r1, #44	; 0x2c
+ 80009e2:	fb01 f303 	mul.w	r3, r1, r3
+ 80009e6:	4413      	add	r3, r2
+ 80009e8:	3354      	adds	r3, #84	; 0x54
+ 80009ea:	781b      	ldrb	r3, [r3, #0]
+ 80009ec:	f083 0301 	eor.w	r3, r3, #1
+ 80009f0:	b2d8      	uxtb	r0, r3
+ 80009f2:	687a      	ldr	r2, [r7, #4]
+ 80009f4:	68fb      	ldr	r3, [r7, #12]
+ 80009f6:	212c      	movs	r1, #44	; 0x2c
+ 80009f8:	fb01 f303 	mul.w	r3, r1, r3
+ 80009fc:	4413      	add	r3, r2
+ 80009fe:	3354      	adds	r3, #84	; 0x54
+ 8000a00:	4602      	mov	r2, r0
+ 8000a02:	701a      	strb	r2, [r3, #0]
+}
+ 8000a04:	e163      	b.n	8000cce <HCD_HC_IN_IRQHandler+0x6a2>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_CHH) == USB_OTG_HCINT_CHH)
+ 8000a06:	68fb      	ldr	r3, [r7, #12]
+ 8000a08:	015a      	lsls	r2, r3, #5
+ 8000a0a:	693b      	ldr	r3, [r7, #16]
+ 8000a0c:	4413      	add	r3, r2
+ 8000a0e:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000a12:	689b      	ldr	r3, [r3, #8]
+ 8000a14:	f003 0302 	and.w	r3, r3, #2
+ 8000a18:	2b02      	cmp	r3, #2
+ 8000a1a:	f040 80f6 	bne.w	8000c0a <HCD_HC_IN_IRQHandler+0x5de>
+    if (hhcd->hc[ch_num].state == HC_XFRC)
+ 8000a1e:	687a      	ldr	r2, [r7, #4]
+ 8000a20:	68fb      	ldr	r3, [r7, #12]
+ 8000a22:	212c      	movs	r1, #44	; 0x2c
+ 8000a24:	fb01 f303 	mul.w	r3, r1, r3
+ 8000a28:	4413      	add	r3, r2
+ 8000a2a:	3361      	adds	r3, #97	; 0x61
+ 8000a2c:	781b      	ldrb	r3, [r3, #0]
+ 8000a2e:	2b01      	cmp	r3, #1
+ 8000a30:	d109      	bne.n	8000a46 <HCD_HC_IN_IRQHandler+0x41a>
+      hhcd->hc[ch_num].urb_state = URB_DONE;
+ 8000a32:	687a      	ldr	r2, [r7, #4]
+ 8000a34:	68fb      	ldr	r3, [r7, #12]
+ 8000a36:	212c      	movs	r1, #44	; 0x2c
+ 8000a38:	fb01 f303 	mul.w	r3, r1, r3
+ 8000a3c:	4413      	add	r3, r2
+ 8000a3e:	3360      	adds	r3, #96	; 0x60
+ 8000a40:	2201      	movs	r2, #1
+ 8000a42:	701a      	strb	r2, [r3, #0]
+ 8000a44:	e0c9      	b.n	8000bda <HCD_HC_IN_IRQHandler+0x5ae>
+    else if (hhcd->hc[ch_num].state == HC_STALL)
+ 8000a46:	687a      	ldr	r2, [r7, #4]
+ 8000a48:	68fb      	ldr	r3, [r7, #12]
+ 8000a4a:	212c      	movs	r1, #44	; 0x2c
+ 8000a4c:	fb01 f303 	mul.w	r3, r1, r3
+ 8000a50:	4413      	add	r3, r2
+ 8000a52:	3361      	adds	r3, #97	; 0x61
+ 8000a54:	781b      	ldrb	r3, [r3, #0]
+ 8000a56:	2b05      	cmp	r3, #5
+ 8000a58:	d109      	bne.n	8000a6e <HCD_HC_IN_IRQHandler+0x442>
+      hhcd->hc[ch_num].urb_state = URB_STALL;
+ 8000a5a:	687a      	ldr	r2, [r7, #4]
+ 8000a5c:	68fb      	ldr	r3, [r7, #12]
+ 8000a5e:	212c      	movs	r1, #44	; 0x2c
+ 8000a60:	fb01 f303 	mul.w	r3, r1, r3
+ 8000a64:	4413      	add	r3, r2
+ 8000a66:	3360      	adds	r3, #96	; 0x60
+ 8000a68:	2205      	movs	r2, #5
+ 8000a6a:	701a      	strb	r2, [r3, #0]
+ 8000a6c:	e0b5      	b.n	8000bda <HCD_HC_IN_IRQHandler+0x5ae>
+    else if ((hhcd->hc[ch_num].state == HC_XACTERR) ||
+ 8000a6e:	687a      	ldr	r2, [r7, #4]
+ 8000a70:	68fb      	ldr	r3, [r7, #12]
+ 8000a72:	212c      	movs	r1, #44	; 0x2c
+ 8000a74:	fb01 f303 	mul.w	r3, r1, r3
+ 8000a78:	4413      	add	r3, r2
+ 8000a7a:	3361      	adds	r3, #97	; 0x61
+ 8000a7c:	781b      	ldrb	r3, [r3, #0]
+ 8000a7e:	2b06      	cmp	r3, #6
+ 8000a80:	d009      	beq.n	8000a96 <HCD_HC_IN_IRQHandler+0x46a>
+             (hhcd->hc[ch_num].state == HC_DATATGLERR))
+ 8000a82:	687a      	ldr	r2, [r7, #4]
+ 8000a84:	68fb      	ldr	r3, [r7, #12]
+ 8000a86:	212c      	movs	r1, #44	; 0x2c
+ 8000a88:	fb01 f303 	mul.w	r3, r1, r3
+ 8000a8c:	4413      	add	r3, r2
+ 8000a8e:	3361      	adds	r3, #97	; 0x61
+ 8000a90:	781b      	ldrb	r3, [r3, #0]
+    else if ((hhcd->hc[ch_num].state == HC_XACTERR) ||
+ 8000a92:	2b08      	cmp	r3, #8
+ 8000a94:	d150      	bne.n	8000b38 <HCD_HC_IN_IRQHandler+0x50c>
+      hhcd->hc[ch_num].ErrCnt++;
+ 8000a96:	687a      	ldr	r2, [r7, #4]
+ 8000a98:	68fb      	ldr	r3, [r7, #12]
+ 8000a9a:	212c      	movs	r1, #44	; 0x2c
+ 8000a9c:	fb01 f303 	mul.w	r3, r1, r3
+ 8000aa0:	4413      	add	r3, r2
+ 8000aa2:	335c      	adds	r3, #92	; 0x5c
+ 8000aa4:	681b      	ldr	r3, [r3, #0]
+ 8000aa6:	1c5a      	adds	r2, r3, #1
+ 8000aa8:	6879      	ldr	r1, [r7, #4]
+ 8000aaa:	68fb      	ldr	r3, [r7, #12]
+ 8000aac:	202c      	movs	r0, #44	; 0x2c
+ 8000aae:	fb00 f303 	mul.w	r3, r0, r3
+ 8000ab2:	440b      	add	r3, r1
+ 8000ab4:	335c      	adds	r3, #92	; 0x5c
+ 8000ab6:	601a      	str	r2, [r3, #0]
+      if (hhcd->hc[ch_num].ErrCnt > 2U)
+ 8000ab8:	687a      	ldr	r2, [r7, #4]
+ 8000aba:	68fb      	ldr	r3, [r7, #12]
+ 8000abc:	212c      	movs	r1, #44	; 0x2c
+ 8000abe:	fb01 f303 	mul.w	r3, r1, r3
+ 8000ac2:	4413      	add	r3, r2
+ 8000ac4:	335c      	adds	r3, #92	; 0x5c
+ 8000ac6:	681b      	ldr	r3, [r3, #0]
+ 8000ac8:	2b02      	cmp	r3, #2
+ 8000aca:	d912      	bls.n	8000af2 <HCD_HC_IN_IRQHandler+0x4c6>
+        hhcd->hc[ch_num].ErrCnt = 0U;
+ 8000acc:	687a      	ldr	r2, [r7, #4]
+ 8000ace:	68fb      	ldr	r3, [r7, #12]
+ 8000ad0:	212c      	movs	r1, #44	; 0x2c
+ 8000ad2:	fb01 f303 	mul.w	r3, r1, r3
+ 8000ad6:	4413      	add	r3, r2
+ 8000ad8:	335c      	adds	r3, #92	; 0x5c
+ 8000ada:	2200      	movs	r2, #0
+ 8000adc:	601a      	str	r2, [r3, #0]
+        hhcd->hc[ch_num].urb_state = URB_ERROR;
+ 8000ade:	687a      	ldr	r2, [r7, #4]
+ 8000ae0:	68fb      	ldr	r3, [r7, #12]
+ 8000ae2:	212c      	movs	r1, #44	; 0x2c
+ 8000ae4:	fb01 f303 	mul.w	r3, r1, r3
+ 8000ae8:	4413      	add	r3, r2
+ 8000aea:	3360      	adds	r3, #96	; 0x60
+ 8000aec:	2204      	movs	r2, #4
+ 8000aee:	701a      	strb	r2, [r3, #0]
+      if (hhcd->hc[ch_num].ErrCnt > 2U)
+ 8000af0:	e073      	b.n	8000bda <HCD_HC_IN_IRQHandler+0x5ae>
+        hhcd->hc[ch_num].urb_state = URB_NOTREADY;
+ 8000af2:	687a      	ldr	r2, [r7, #4]
+ 8000af4:	68fb      	ldr	r3, [r7, #12]
+ 8000af6:	212c      	movs	r1, #44	; 0x2c
+ 8000af8:	fb01 f303 	mul.w	r3, r1, r3
+ 8000afc:	4413      	add	r3, r2
+ 8000afe:	3360      	adds	r3, #96	; 0x60
+ 8000b00:	2202      	movs	r2, #2
+ 8000b02:	701a      	strb	r2, [r3, #0]
+        tmpreg = USBx_HC(ch_num)->HCCHAR;
+ 8000b04:	68fb      	ldr	r3, [r7, #12]
+ 8000b06:	015a      	lsls	r2, r3, #5
+ 8000b08:	693b      	ldr	r3, [r7, #16]
+ 8000b0a:	4413      	add	r3, r2
+ 8000b0c:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000b10:	681b      	ldr	r3, [r3, #0]
+ 8000b12:	60bb      	str	r3, [r7, #8]
+        tmpreg &= ~USB_OTG_HCCHAR_CHDIS;
+ 8000b14:	68bb      	ldr	r3, [r7, #8]
+ 8000b16:	f023 4380 	bic.w	r3, r3, #1073741824	; 0x40000000
+ 8000b1a:	60bb      	str	r3, [r7, #8]
+        tmpreg |= USB_OTG_HCCHAR_CHENA;
+ 8000b1c:	68bb      	ldr	r3, [r7, #8]
+ 8000b1e:	f043 4300 	orr.w	r3, r3, #2147483648	; 0x80000000
+ 8000b22:	60bb      	str	r3, [r7, #8]
+        USBx_HC(ch_num)->HCCHAR = tmpreg;
+ 8000b24:	68fb      	ldr	r3, [r7, #12]
+ 8000b26:	015a      	lsls	r2, r3, #5
+ 8000b28:	693b      	ldr	r3, [r7, #16]
+ 8000b2a:	4413      	add	r3, r2
+ 8000b2c:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000b30:	461a      	mov	r2, r3
+ 8000b32:	68bb      	ldr	r3, [r7, #8]
+ 8000b34:	6013      	str	r3, [r2, #0]
+      if (hhcd->hc[ch_num].ErrCnt > 2U)
+ 8000b36:	e050      	b.n	8000bda <HCD_HC_IN_IRQHandler+0x5ae>
+    else if (hhcd->hc[ch_num].state == HC_NAK)
+ 8000b38:	687a      	ldr	r2, [r7, #4]
+ 8000b3a:	68fb      	ldr	r3, [r7, #12]
+ 8000b3c:	212c      	movs	r1, #44	; 0x2c
+ 8000b3e:	fb01 f303 	mul.w	r3, r1, r3
+ 8000b42:	4413      	add	r3, r2
+ 8000b44:	3361      	adds	r3, #97	; 0x61
+ 8000b46:	781b      	ldrb	r3, [r3, #0]
+ 8000b48:	2b03      	cmp	r3, #3
+ 8000b4a:	d122      	bne.n	8000b92 <HCD_HC_IN_IRQHandler+0x566>
+      hhcd->hc[ch_num].urb_state  = URB_NOTREADY;
+ 8000b4c:	687a      	ldr	r2, [r7, #4]
+ 8000b4e:	68fb      	ldr	r3, [r7, #12]
+ 8000b50:	212c      	movs	r1, #44	; 0x2c
+ 8000b52:	fb01 f303 	mul.w	r3, r1, r3
+ 8000b56:	4413      	add	r3, r2
+ 8000b58:	3360      	adds	r3, #96	; 0x60
+ 8000b5a:	2202      	movs	r2, #2
+ 8000b5c:	701a      	strb	r2, [r3, #0]
+      tmpreg = USBx_HC(ch_num)->HCCHAR;
+ 8000b5e:	68fb      	ldr	r3, [r7, #12]
+ 8000b60:	015a      	lsls	r2, r3, #5
+ 8000b62:	693b      	ldr	r3, [r7, #16]
+ 8000b64:	4413      	add	r3, r2
+ 8000b66:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000b6a:	681b      	ldr	r3, [r3, #0]
+ 8000b6c:	60bb      	str	r3, [r7, #8]
+      tmpreg &= ~USB_OTG_HCCHAR_CHDIS;
+ 8000b6e:	68bb      	ldr	r3, [r7, #8]
+ 8000b70:	f023 4380 	bic.w	r3, r3, #1073741824	; 0x40000000
+ 8000b74:	60bb      	str	r3, [r7, #8]
+      tmpreg |= USB_OTG_HCCHAR_CHENA;
+ 8000b76:	68bb      	ldr	r3, [r7, #8]
+ 8000b78:	f043 4300 	orr.w	r3, r3, #2147483648	; 0x80000000
+ 8000b7c:	60bb      	str	r3, [r7, #8]
+      USBx_HC(ch_num)->HCCHAR = tmpreg;
+ 8000b7e:	68fb      	ldr	r3, [r7, #12]
+ 8000b80:	015a      	lsls	r2, r3, #5
+ 8000b82:	693b      	ldr	r3, [r7, #16]
+ 8000b84:	4413      	add	r3, r2
+ 8000b86:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000b8a:	461a      	mov	r2, r3
+ 8000b8c:	68bb      	ldr	r3, [r7, #8]
+ 8000b8e:	6013      	str	r3, [r2, #0]
+ 8000b90:	e023      	b.n	8000bda <HCD_HC_IN_IRQHandler+0x5ae>
+    else if (hhcd->hc[ch_num].state == HC_BBLERR)
+ 8000b92:	687a      	ldr	r2, [r7, #4]
+ 8000b94:	68fb      	ldr	r3, [r7, #12]
+ 8000b96:	212c      	movs	r1, #44	; 0x2c
+ 8000b98:	fb01 f303 	mul.w	r3, r1, r3
+ 8000b9c:	4413      	add	r3, r2
+ 8000b9e:	3361      	adds	r3, #97	; 0x61
+ 8000ba0:	781b      	ldrb	r3, [r3, #0]
+ 8000ba2:	2b07      	cmp	r3, #7
+ 8000ba4:	d119      	bne.n	8000bda <HCD_HC_IN_IRQHandler+0x5ae>
+      hhcd->hc[ch_num].ErrCnt++;
+ 8000ba6:	687a      	ldr	r2, [r7, #4]
+ 8000ba8:	68fb      	ldr	r3, [r7, #12]
+ 8000baa:	212c      	movs	r1, #44	; 0x2c
+ 8000bac:	fb01 f303 	mul.w	r3, r1, r3
+ 8000bb0:	4413      	add	r3, r2
+ 8000bb2:	335c      	adds	r3, #92	; 0x5c
+ 8000bb4:	681b      	ldr	r3, [r3, #0]
+ 8000bb6:	1c5a      	adds	r2, r3, #1
+ 8000bb8:	6879      	ldr	r1, [r7, #4]
+ 8000bba:	68fb      	ldr	r3, [r7, #12]
+ 8000bbc:	202c      	movs	r0, #44	; 0x2c
+ 8000bbe:	fb00 f303 	mul.w	r3, r0, r3
+ 8000bc2:	440b      	add	r3, r1
+ 8000bc4:	335c      	adds	r3, #92	; 0x5c
+ 8000bc6:	601a      	str	r2, [r3, #0]
+      hhcd->hc[ch_num].urb_state = URB_ERROR;
+ 8000bc8:	687a      	ldr	r2, [r7, #4]
+ 8000bca:	68fb      	ldr	r3, [r7, #12]
+ 8000bcc:	212c      	movs	r1, #44	; 0x2c
+ 8000bce:	fb01 f303 	mul.w	r3, r1, r3
+ 8000bd2:	4413      	add	r3, r2
+ 8000bd4:	3360      	adds	r3, #96	; 0x60
+ 8000bd6:	2204      	movs	r2, #4
+ 8000bd8:	701a      	strb	r2, [r3, #0]
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_CHH);
+ 8000bda:	68fb      	ldr	r3, [r7, #12]
+ 8000bdc:	015a      	lsls	r2, r3, #5
+ 8000bde:	693b      	ldr	r3, [r7, #16]
+ 8000be0:	4413      	add	r3, r2
+ 8000be2:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000be6:	461a      	mov	r2, r3
+ 8000be8:	2302      	movs	r3, #2
+ 8000bea:	6093      	str	r3, [r2, #8]
+    HAL_HCD_HC_NotifyURBChange_Callback(hhcd, (uint8_t)ch_num, hhcd->hc[ch_num].urb_state);
+ 8000bec:	68fb      	ldr	r3, [r7, #12]
+ 8000bee:	b2d9      	uxtb	r1, r3
+ 8000bf0:	687a      	ldr	r2, [r7, #4]
+ 8000bf2:	68fb      	ldr	r3, [r7, #12]
+ 8000bf4:	202c      	movs	r0, #44	; 0x2c
+ 8000bf6:	fb00 f303 	mul.w	r3, r0, r3
+ 8000bfa:	4413      	add	r3, r2
+ 8000bfc:	3360      	adds	r3, #96	; 0x60
+ 8000bfe:	781b      	ldrb	r3, [r3, #0]
+ 8000c00:	461a      	mov	r2, r3
+ 8000c02:	6878      	ldr	r0, [r7, #4]
+ 8000c04:	f001 f8b7 	bl	8001d76 <HAL_HCD_HC_NotifyURBChange_Callback>
+}
+ 8000c08:	e061      	b.n	8000cce <HCD_HC_IN_IRQHandler+0x6a2>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_NAK) == USB_OTG_HCINT_NAK)
+ 8000c0a:	68fb      	ldr	r3, [r7, #12]
+ 8000c0c:	015a      	lsls	r2, r3, #5
+ 8000c0e:	693b      	ldr	r3, [r7, #16]
+ 8000c10:	4413      	add	r3, r2
+ 8000c12:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000c16:	689b      	ldr	r3, [r3, #8]
+ 8000c18:	f003 0310 	and.w	r3, r3, #16
+ 8000c1c:	2b10      	cmp	r3, #16
+ 8000c1e:	d156      	bne.n	8000cce <HCD_HC_IN_IRQHandler+0x6a2>
+    if (hhcd->hc[ch_num].ep_type == EP_TYPE_INTR)
+ 8000c20:	687a      	ldr	r2, [r7, #4]
+ 8000c22:	68fb      	ldr	r3, [r7, #12]
+ 8000c24:	212c      	movs	r1, #44	; 0x2c
+ 8000c26:	fb01 f303 	mul.w	r3, r1, r3
+ 8000c2a:	4413      	add	r3, r2
+ 8000c2c:	333f      	adds	r3, #63	; 0x3f
+ 8000c2e:	781b      	ldrb	r3, [r3, #0]
+ 8000c30:	2b03      	cmp	r3, #3
+ 8000c32:	d111      	bne.n	8000c58 <HCD_HC_IN_IRQHandler+0x62c>
+      hhcd->hc[ch_num].ErrCnt = 0U;
+ 8000c34:	687a      	ldr	r2, [r7, #4]
+ 8000c36:	68fb      	ldr	r3, [r7, #12]
+ 8000c38:	212c      	movs	r1, #44	; 0x2c
+ 8000c3a:	fb01 f303 	mul.w	r3, r1, r3
+ 8000c3e:	4413      	add	r3, r2
+ 8000c40:	335c      	adds	r3, #92	; 0x5c
+ 8000c42:	2200      	movs	r2, #0
+ 8000c44:	601a      	str	r2, [r3, #0]
+      (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000c46:	687b      	ldr	r3, [r7, #4]
+ 8000c48:	681b      	ldr	r3, [r3, #0]
+ 8000c4a:	68fa      	ldr	r2, [r7, #12]
+ 8000c4c:	b2d2      	uxtb	r2, r2
+ 8000c4e:	4611      	mov	r1, r2
+ 8000c50:	4618      	mov	r0, r3
+ 8000c52:	f000 fe39 	bl	80018c8 <USB_HC_Halt>
+ 8000c56:	e031      	b.n	8000cbc <HCD_HC_IN_IRQHandler+0x690>
+    else if ((hhcd->hc[ch_num].ep_type == EP_TYPE_CTRL) ||
+ 8000c58:	687a      	ldr	r2, [r7, #4]
+ 8000c5a:	68fb      	ldr	r3, [r7, #12]
+ 8000c5c:	212c      	movs	r1, #44	; 0x2c
+ 8000c5e:	fb01 f303 	mul.w	r3, r1, r3
+ 8000c62:	4413      	add	r3, r2
+ 8000c64:	333f      	adds	r3, #63	; 0x3f
+ 8000c66:	781b      	ldrb	r3, [r3, #0]
+ 8000c68:	2b00      	cmp	r3, #0
+ 8000c6a:	d009      	beq.n	8000c80 <HCD_HC_IN_IRQHandler+0x654>
+             (hhcd->hc[ch_num].ep_type == EP_TYPE_BULK))
+ 8000c6c:	687a      	ldr	r2, [r7, #4]
+ 8000c6e:	68fb      	ldr	r3, [r7, #12]
+ 8000c70:	212c      	movs	r1, #44	; 0x2c
+ 8000c72:	fb01 f303 	mul.w	r3, r1, r3
+ 8000c76:	4413      	add	r3, r2
+ 8000c78:	333f      	adds	r3, #63	; 0x3f
+ 8000c7a:	781b      	ldrb	r3, [r3, #0]
+    else if ((hhcd->hc[ch_num].ep_type == EP_TYPE_CTRL) ||
+ 8000c7c:	2b02      	cmp	r3, #2
+ 8000c7e:	d11d      	bne.n	8000cbc <HCD_HC_IN_IRQHandler+0x690>
+      hhcd->hc[ch_num].ErrCnt = 0U;
+ 8000c80:	687a      	ldr	r2, [r7, #4]
+ 8000c82:	68fb      	ldr	r3, [r7, #12]
+ 8000c84:	212c      	movs	r1, #44	; 0x2c
+ 8000c86:	fb01 f303 	mul.w	r3, r1, r3
+ 8000c8a:	4413      	add	r3, r2
+ 8000c8c:	335c      	adds	r3, #92	; 0x5c
+ 8000c8e:	2200      	movs	r2, #0
+ 8000c90:	601a      	str	r2, [r3, #0]
+      if (hhcd->Init.dma_enable == 0U)
+ 8000c92:	687b      	ldr	r3, [r7, #4]
+ 8000c94:	691b      	ldr	r3, [r3, #16]
+ 8000c96:	2b00      	cmp	r3, #0
+ 8000c98:	d110      	bne.n	8000cbc <HCD_HC_IN_IRQHandler+0x690>
+        hhcd->hc[ch_num].state = HC_NAK;
+ 8000c9a:	687a      	ldr	r2, [r7, #4]
+ 8000c9c:	68fb      	ldr	r3, [r7, #12]
+ 8000c9e:	212c      	movs	r1, #44	; 0x2c
+ 8000ca0:	fb01 f303 	mul.w	r3, r1, r3
+ 8000ca4:	4413      	add	r3, r2
+ 8000ca6:	3361      	adds	r3, #97	; 0x61
+ 8000ca8:	2203      	movs	r2, #3
+ 8000caa:	701a      	strb	r2, [r3, #0]
+        (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000cac:	687b      	ldr	r3, [r7, #4]
+ 8000cae:	681b      	ldr	r3, [r3, #0]
+ 8000cb0:	68fa      	ldr	r2, [r7, #12]
+ 8000cb2:	b2d2      	uxtb	r2, r2
+ 8000cb4:	4611      	mov	r1, r2
+ 8000cb6:	4618      	mov	r0, r3
+ 8000cb8:	f000 fe06 	bl	80018c8 <USB_HC_Halt>
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_NAK);
+ 8000cbc:	68fb      	ldr	r3, [r7, #12]
+ 8000cbe:	015a      	lsls	r2, r3, #5
+ 8000cc0:	693b      	ldr	r3, [r7, #16]
+ 8000cc2:	4413      	add	r3, r2
+ 8000cc4:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000cc8:	461a      	mov	r2, r3
+ 8000cca:	2310      	movs	r3, #16
+ 8000ccc:	6093      	str	r3, [r2, #8]
+}
+ 8000cce:	bf00      	nop
+ 8000cd0:	3718      	adds	r7, #24
+ 8000cd2:	46bd      	mov	sp, r7
+ 8000cd4:	bd80      	pop	{r7, pc}
+
+08000cd6 <HCD_HC_OUT_IRQHandler>:
+  * @param  chnum Channel number.
+  *         This parameter can be a value from 1 to 15
+  * @retval none
+  */
+static void HCD_HC_OUT_IRQHandler(HCD_HandleTypeDef *hhcd, uint8_t chnum)
+{
+ 8000cd6:	b580      	push	{r7, lr}
+ 8000cd8:	b088      	sub	sp, #32
+ 8000cda:	af00      	add	r7, sp, #0
+ 8000cdc:	6078      	str	r0, [r7, #4]
+ 8000cde:	460b      	mov	r3, r1
+ 8000ce0:	70fb      	strb	r3, [r7, #3]
+  USB_OTG_GlobalTypeDef *USBx = hhcd->Instance;
+ 8000ce2:	687b      	ldr	r3, [r7, #4]
+ 8000ce4:	681b      	ldr	r3, [r3, #0]
+ 8000ce6:	61fb      	str	r3, [r7, #28]
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 8000ce8:	69fb      	ldr	r3, [r7, #28]
+ 8000cea:	61bb      	str	r3, [r7, #24]
+  uint32_t ch_num = (uint32_t)chnum;
+ 8000cec:	78fb      	ldrb	r3, [r7, #3]
+ 8000cee:	617b      	str	r3, [r7, #20]
+  uint32_t tmpreg;
+  uint32_t num_packets;
+
+  if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_AHBERR) == USB_OTG_HCINT_AHBERR)
+ 8000cf0:	697b      	ldr	r3, [r7, #20]
+ 8000cf2:	015a      	lsls	r2, r3, #5
+ 8000cf4:	69bb      	ldr	r3, [r7, #24]
+ 8000cf6:	4413      	add	r3, r2
+ 8000cf8:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000cfc:	689b      	ldr	r3, [r3, #8]
+ 8000cfe:	f003 0304 	and.w	r3, r3, #4
+ 8000d02:	2b04      	cmp	r3, #4
+ 8000d04:	d11a      	bne.n	8000d3c <HCD_HC_OUT_IRQHandler+0x66>
+  {
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_AHBERR);
+ 8000d06:	697b      	ldr	r3, [r7, #20]
+ 8000d08:	015a      	lsls	r2, r3, #5
+ 8000d0a:	69bb      	ldr	r3, [r7, #24]
+ 8000d0c:	4413      	add	r3, r2
+ 8000d0e:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000d12:	461a      	mov	r2, r3
+ 8000d14:	2304      	movs	r3, #4
+ 8000d16:	6093      	str	r3, [r2, #8]
+    hhcd->hc[ch_num].state = HC_XACTERR;
+ 8000d18:	687a      	ldr	r2, [r7, #4]
+ 8000d1a:	697b      	ldr	r3, [r7, #20]
+ 8000d1c:	212c      	movs	r1, #44	; 0x2c
+ 8000d1e:	fb01 f303 	mul.w	r3, r1, r3
+ 8000d22:	4413      	add	r3, r2
+ 8000d24:	3361      	adds	r3, #97	; 0x61
+ 8000d26:	2206      	movs	r2, #6
+ 8000d28:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000d2a:	687b      	ldr	r3, [r7, #4]
+ 8000d2c:	681b      	ldr	r3, [r3, #0]
+ 8000d2e:	697a      	ldr	r2, [r7, #20]
+ 8000d30:	b2d2      	uxtb	r2, r2
+ 8000d32:	4611      	mov	r1, r2
+ 8000d34:	4618      	mov	r0, r3
+ 8000d36:	f000 fdc7 	bl	80018c8 <USB_HC_Halt>
+  }
+  else
+  {
+    /* ... */
+  }
+}
+ 8000d3a:	e331      	b.n	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_ACK) == USB_OTG_HCINT_ACK)
+ 8000d3c:	697b      	ldr	r3, [r7, #20]
+ 8000d3e:	015a      	lsls	r2, r3, #5
+ 8000d40:	69bb      	ldr	r3, [r7, #24]
+ 8000d42:	4413      	add	r3, r2
+ 8000d44:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000d48:	689b      	ldr	r3, [r3, #8]
+ 8000d4a:	f003 0320 	and.w	r3, r3, #32
+ 8000d4e:	2b20      	cmp	r3, #32
+ 8000d50:	d12e      	bne.n	8000db0 <HCD_HC_OUT_IRQHandler+0xda>
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_ACK);
+ 8000d52:	697b      	ldr	r3, [r7, #20]
+ 8000d54:	015a      	lsls	r2, r3, #5
+ 8000d56:	69bb      	ldr	r3, [r7, #24]
+ 8000d58:	4413      	add	r3, r2
+ 8000d5a:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000d5e:	461a      	mov	r2, r3
+ 8000d60:	2320      	movs	r3, #32
+ 8000d62:	6093      	str	r3, [r2, #8]
+    if (hhcd->hc[ch_num].do_ping == 1U)
+ 8000d64:	687a      	ldr	r2, [r7, #4]
+ 8000d66:	697b      	ldr	r3, [r7, #20]
+ 8000d68:	212c      	movs	r1, #44	; 0x2c
+ 8000d6a:	fb01 f303 	mul.w	r3, r1, r3
+ 8000d6e:	4413      	add	r3, r2
+ 8000d70:	333d      	adds	r3, #61	; 0x3d
+ 8000d72:	781b      	ldrb	r3, [r3, #0]
+ 8000d74:	2b01      	cmp	r3, #1
+ 8000d76:	f040 8313 	bne.w	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+      hhcd->hc[ch_num].do_ping = 0U;
+ 8000d7a:	687a      	ldr	r2, [r7, #4]
+ 8000d7c:	697b      	ldr	r3, [r7, #20]
+ 8000d7e:	212c      	movs	r1, #44	; 0x2c
+ 8000d80:	fb01 f303 	mul.w	r3, r1, r3
+ 8000d84:	4413      	add	r3, r2
+ 8000d86:	333d      	adds	r3, #61	; 0x3d
+ 8000d88:	2200      	movs	r2, #0
+ 8000d8a:	701a      	strb	r2, [r3, #0]
+      hhcd->hc[ch_num].urb_state = URB_NOTREADY;
+ 8000d8c:	687a      	ldr	r2, [r7, #4]
+ 8000d8e:	697b      	ldr	r3, [r7, #20]
+ 8000d90:	212c      	movs	r1, #44	; 0x2c
+ 8000d92:	fb01 f303 	mul.w	r3, r1, r3
+ 8000d96:	4413      	add	r3, r2
+ 8000d98:	3360      	adds	r3, #96	; 0x60
+ 8000d9a:	2202      	movs	r2, #2
+ 8000d9c:	701a      	strb	r2, [r3, #0]
+      (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000d9e:	687b      	ldr	r3, [r7, #4]
+ 8000da0:	681b      	ldr	r3, [r3, #0]
+ 8000da2:	697a      	ldr	r2, [r7, #20]
+ 8000da4:	b2d2      	uxtb	r2, r2
+ 8000da6:	4611      	mov	r1, r2
+ 8000da8:	4618      	mov	r0, r3
+ 8000daa:	f000 fd8d 	bl	80018c8 <USB_HC_Halt>
+}
+ 8000dae:	e2f7      	b.n	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_FRMOR) == USB_OTG_HCINT_FRMOR)
+ 8000db0:	697b      	ldr	r3, [r7, #20]
+ 8000db2:	015a      	lsls	r2, r3, #5
+ 8000db4:	69bb      	ldr	r3, [r7, #24]
+ 8000db6:	4413      	add	r3, r2
+ 8000db8:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000dbc:	689b      	ldr	r3, [r3, #8]
+ 8000dbe:	f403 7300 	and.w	r3, r3, #512	; 0x200
+ 8000dc2:	f5b3 7f00 	cmp.w	r3, #512	; 0x200
+ 8000dc6:	d112      	bne.n	8000dee <HCD_HC_OUT_IRQHandler+0x118>
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_FRMOR);
+ 8000dc8:	697b      	ldr	r3, [r7, #20]
+ 8000dca:	015a      	lsls	r2, r3, #5
+ 8000dcc:	69bb      	ldr	r3, [r7, #24]
+ 8000dce:	4413      	add	r3, r2
+ 8000dd0:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000dd4:	461a      	mov	r2, r3
+ 8000dd6:	f44f 7300 	mov.w	r3, #512	; 0x200
+ 8000dda:	6093      	str	r3, [r2, #8]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000ddc:	687b      	ldr	r3, [r7, #4]
+ 8000dde:	681b      	ldr	r3, [r3, #0]
+ 8000de0:	697a      	ldr	r2, [r7, #20]
+ 8000de2:	b2d2      	uxtb	r2, r2
+ 8000de4:	4611      	mov	r1, r2
+ 8000de6:	4618      	mov	r0, r3
+ 8000de8:	f000 fd6e 	bl	80018c8 <USB_HC_Halt>
+}
+ 8000dec:	e2d8      	b.n	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_XFRC) == USB_OTG_HCINT_XFRC)
+ 8000dee:	697b      	ldr	r3, [r7, #20]
+ 8000df0:	015a      	lsls	r2, r3, #5
+ 8000df2:	69bb      	ldr	r3, [r7, #24]
+ 8000df4:	4413      	add	r3, r2
+ 8000df6:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000dfa:	689b      	ldr	r3, [r3, #8]
+ 8000dfc:	f003 0301 	and.w	r3, r3, #1
+ 8000e00:	2b01      	cmp	r3, #1
+ 8000e02:	d140      	bne.n	8000e86 <HCD_HC_OUT_IRQHandler+0x1b0>
+    hhcd->hc[ch_num].ErrCnt = 0U;
+ 8000e04:	687a      	ldr	r2, [r7, #4]
+ 8000e06:	697b      	ldr	r3, [r7, #20]
+ 8000e08:	212c      	movs	r1, #44	; 0x2c
+ 8000e0a:	fb01 f303 	mul.w	r3, r1, r3
+ 8000e0e:	4413      	add	r3, r2
+ 8000e10:	335c      	adds	r3, #92	; 0x5c
+ 8000e12:	2200      	movs	r2, #0
+ 8000e14:	601a      	str	r2, [r3, #0]
+    if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_NYET) == USB_OTG_HCINT_NYET)
+ 8000e16:	697b      	ldr	r3, [r7, #20]
+ 8000e18:	015a      	lsls	r2, r3, #5
+ 8000e1a:	69bb      	ldr	r3, [r7, #24]
+ 8000e1c:	4413      	add	r3, r2
+ 8000e1e:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000e22:	689b      	ldr	r3, [r3, #8]
+ 8000e24:	f003 0340 	and.w	r3, r3, #64	; 0x40
+ 8000e28:	2b40      	cmp	r3, #64	; 0x40
+ 8000e2a:	d111      	bne.n	8000e50 <HCD_HC_OUT_IRQHandler+0x17a>
+      hhcd->hc[ch_num].do_ping = 1U;
+ 8000e2c:	687a      	ldr	r2, [r7, #4]
+ 8000e2e:	697b      	ldr	r3, [r7, #20]
+ 8000e30:	212c      	movs	r1, #44	; 0x2c
+ 8000e32:	fb01 f303 	mul.w	r3, r1, r3
+ 8000e36:	4413      	add	r3, r2
+ 8000e38:	333d      	adds	r3, #61	; 0x3d
+ 8000e3a:	2201      	movs	r2, #1
+ 8000e3c:	701a      	strb	r2, [r3, #0]
+      __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_NYET);
+ 8000e3e:	697b      	ldr	r3, [r7, #20]
+ 8000e40:	015a      	lsls	r2, r3, #5
+ 8000e42:	69bb      	ldr	r3, [r7, #24]
+ 8000e44:	4413      	add	r3, r2
+ 8000e46:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000e4a:	461a      	mov	r2, r3
+ 8000e4c:	2340      	movs	r3, #64	; 0x40
+ 8000e4e:	6093      	str	r3, [r2, #8]
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_XFRC);
+ 8000e50:	697b      	ldr	r3, [r7, #20]
+ 8000e52:	015a      	lsls	r2, r3, #5
+ 8000e54:	69bb      	ldr	r3, [r7, #24]
+ 8000e56:	4413      	add	r3, r2
+ 8000e58:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000e5c:	461a      	mov	r2, r3
+ 8000e5e:	2301      	movs	r3, #1
+ 8000e60:	6093      	str	r3, [r2, #8]
+    hhcd->hc[ch_num].state = HC_XFRC;
+ 8000e62:	687a      	ldr	r2, [r7, #4]
+ 8000e64:	697b      	ldr	r3, [r7, #20]
+ 8000e66:	212c      	movs	r1, #44	; 0x2c
+ 8000e68:	fb01 f303 	mul.w	r3, r1, r3
+ 8000e6c:	4413      	add	r3, r2
+ 8000e6e:	3361      	adds	r3, #97	; 0x61
+ 8000e70:	2201      	movs	r2, #1
+ 8000e72:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000e74:	687b      	ldr	r3, [r7, #4]
+ 8000e76:	681b      	ldr	r3, [r3, #0]
+ 8000e78:	697a      	ldr	r2, [r7, #20]
+ 8000e7a:	b2d2      	uxtb	r2, r2
+ 8000e7c:	4611      	mov	r1, r2
+ 8000e7e:	4618      	mov	r0, r3
+ 8000e80:	f000 fd22 	bl	80018c8 <USB_HC_Halt>
+}
+ 8000e84:	e28c      	b.n	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_NYET) == USB_OTG_HCINT_NYET)
+ 8000e86:	697b      	ldr	r3, [r7, #20]
+ 8000e88:	015a      	lsls	r2, r3, #5
+ 8000e8a:	69bb      	ldr	r3, [r7, #24]
+ 8000e8c:	4413      	add	r3, r2
+ 8000e8e:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000e92:	689b      	ldr	r3, [r3, #8]
+ 8000e94:	f003 0340 	and.w	r3, r3, #64	; 0x40
+ 8000e98:	2b40      	cmp	r3, #64	; 0x40
+ 8000e9a:	d12c      	bne.n	8000ef6 <HCD_HC_OUT_IRQHandler+0x220>
+    hhcd->hc[ch_num].state = HC_NYET;
+ 8000e9c:	687a      	ldr	r2, [r7, #4]
+ 8000e9e:	697b      	ldr	r3, [r7, #20]
+ 8000ea0:	212c      	movs	r1, #44	; 0x2c
+ 8000ea2:	fb01 f303 	mul.w	r3, r1, r3
+ 8000ea6:	4413      	add	r3, r2
+ 8000ea8:	3361      	adds	r3, #97	; 0x61
+ 8000eaa:	2204      	movs	r2, #4
+ 8000eac:	701a      	strb	r2, [r3, #0]
+    hhcd->hc[ch_num].do_ping = 1U;
+ 8000eae:	687a      	ldr	r2, [r7, #4]
+ 8000eb0:	697b      	ldr	r3, [r7, #20]
+ 8000eb2:	212c      	movs	r1, #44	; 0x2c
+ 8000eb4:	fb01 f303 	mul.w	r3, r1, r3
+ 8000eb8:	4413      	add	r3, r2
+ 8000eba:	333d      	adds	r3, #61	; 0x3d
+ 8000ebc:	2201      	movs	r2, #1
+ 8000ebe:	701a      	strb	r2, [r3, #0]
+    hhcd->hc[ch_num].ErrCnt = 0U;
+ 8000ec0:	687a      	ldr	r2, [r7, #4]
+ 8000ec2:	697b      	ldr	r3, [r7, #20]
+ 8000ec4:	212c      	movs	r1, #44	; 0x2c
+ 8000ec6:	fb01 f303 	mul.w	r3, r1, r3
+ 8000eca:	4413      	add	r3, r2
+ 8000ecc:	335c      	adds	r3, #92	; 0x5c
+ 8000ece:	2200      	movs	r2, #0
+ 8000ed0:	601a      	str	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000ed2:	687b      	ldr	r3, [r7, #4]
+ 8000ed4:	681b      	ldr	r3, [r3, #0]
+ 8000ed6:	697a      	ldr	r2, [r7, #20]
+ 8000ed8:	b2d2      	uxtb	r2, r2
+ 8000eda:	4611      	mov	r1, r2
+ 8000edc:	4618      	mov	r0, r3
+ 8000ede:	f000 fcf3 	bl	80018c8 <USB_HC_Halt>
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_NYET);
+ 8000ee2:	697b      	ldr	r3, [r7, #20]
+ 8000ee4:	015a      	lsls	r2, r3, #5
+ 8000ee6:	69bb      	ldr	r3, [r7, #24]
+ 8000ee8:	4413      	add	r3, r2
+ 8000eea:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000eee:	461a      	mov	r2, r3
+ 8000ef0:	2340      	movs	r3, #64	; 0x40
+ 8000ef2:	6093      	str	r3, [r2, #8]
+}
+ 8000ef4:	e254      	b.n	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_STALL) == USB_OTG_HCINT_STALL)
+ 8000ef6:	697b      	ldr	r3, [r7, #20]
+ 8000ef8:	015a      	lsls	r2, r3, #5
+ 8000efa:	69bb      	ldr	r3, [r7, #24]
+ 8000efc:	4413      	add	r3, r2
+ 8000efe:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000f02:	689b      	ldr	r3, [r3, #8]
+ 8000f04:	f003 0308 	and.w	r3, r3, #8
+ 8000f08:	2b08      	cmp	r3, #8
+ 8000f0a:	d11a      	bne.n	8000f42 <HCD_HC_OUT_IRQHandler+0x26c>
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_STALL);
+ 8000f0c:	697b      	ldr	r3, [r7, #20]
+ 8000f0e:	015a      	lsls	r2, r3, #5
+ 8000f10:	69bb      	ldr	r3, [r7, #24]
+ 8000f12:	4413      	add	r3, r2
+ 8000f14:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000f18:	461a      	mov	r2, r3
+ 8000f1a:	2308      	movs	r3, #8
+ 8000f1c:	6093      	str	r3, [r2, #8]
+    hhcd->hc[ch_num].state = HC_STALL;
+ 8000f1e:	687a      	ldr	r2, [r7, #4]
+ 8000f20:	697b      	ldr	r3, [r7, #20]
+ 8000f22:	212c      	movs	r1, #44	; 0x2c
+ 8000f24:	fb01 f303 	mul.w	r3, r1, r3
+ 8000f28:	4413      	add	r3, r2
+ 8000f2a:	3361      	adds	r3, #97	; 0x61
+ 8000f2c:	2205      	movs	r2, #5
+ 8000f2e:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000f30:	687b      	ldr	r3, [r7, #4]
+ 8000f32:	681b      	ldr	r3, [r3, #0]
+ 8000f34:	697a      	ldr	r2, [r7, #20]
+ 8000f36:	b2d2      	uxtb	r2, r2
+ 8000f38:	4611      	mov	r1, r2
+ 8000f3a:	4618      	mov	r0, r3
+ 8000f3c:	f000 fcc4 	bl	80018c8 <USB_HC_Halt>
+}
+ 8000f40:	e22e      	b.n	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_NAK) == USB_OTG_HCINT_NAK)
+ 8000f42:	697b      	ldr	r3, [r7, #20]
+ 8000f44:	015a      	lsls	r2, r3, #5
+ 8000f46:	69bb      	ldr	r3, [r7, #24]
+ 8000f48:	4413      	add	r3, r2
+ 8000f4a:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000f4e:	689b      	ldr	r3, [r3, #8]
+ 8000f50:	f003 0310 	and.w	r3, r3, #16
+ 8000f54:	2b10      	cmp	r3, #16
+ 8000f56:	d140      	bne.n	8000fda <HCD_HC_OUT_IRQHandler+0x304>
+    hhcd->hc[ch_num].ErrCnt = 0U;
+ 8000f58:	687a      	ldr	r2, [r7, #4]
+ 8000f5a:	697b      	ldr	r3, [r7, #20]
+ 8000f5c:	212c      	movs	r1, #44	; 0x2c
+ 8000f5e:	fb01 f303 	mul.w	r3, r1, r3
+ 8000f62:	4413      	add	r3, r2
+ 8000f64:	335c      	adds	r3, #92	; 0x5c
+ 8000f66:	2200      	movs	r2, #0
+ 8000f68:	601a      	str	r2, [r3, #0]
+    hhcd->hc[ch_num].state = HC_NAK;
+ 8000f6a:	687a      	ldr	r2, [r7, #4]
+ 8000f6c:	697b      	ldr	r3, [r7, #20]
+ 8000f6e:	212c      	movs	r1, #44	; 0x2c
+ 8000f70:	fb01 f303 	mul.w	r3, r1, r3
+ 8000f74:	4413      	add	r3, r2
+ 8000f76:	3361      	adds	r3, #97	; 0x61
+ 8000f78:	2203      	movs	r2, #3
+ 8000f7a:	701a      	strb	r2, [r3, #0]
+    if (hhcd->hc[ch_num].do_ping == 0U)
+ 8000f7c:	687a      	ldr	r2, [r7, #4]
+ 8000f7e:	697b      	ldr	r3, [r7, #20]
+ 8000f80:	212c      	movs	r1, #44	; 0x2c
+ 8000f82:	fb01 f303 	mul.w	r3, r1, r3
+ 8000f86:	4413      	add	r3, r2
+ 8000f88:	333d      	adds	r3, #61	; 0x3d
+ 8000f8a:	781b      	ldrb	r3, [r3, #0]
+ 8000f8c:	2b00      	cmp	r3, #0
+ 8000f8e:	d112      	bne.n	8000fb6 <HCD_HC_OUT_IRQHandler+0x2e0>
+      if (hhcd->hc[ch_num].speed == HCD_DEVICE_SPEED_HIGH)
+ 8000f90:	687a      	ldr	r2, [r7, #4]
+ 8000f92:	697b      	ldr	r3, [r7, #20]
+ 8000f94:	212c      	movs	r1, #44	; 0x2c
+ 8000f96:	fb01 f303 	mul.w	r3, r1, r3
+ 8000f9a:	4413      	add	r3, r2
+ 8000f9c:	333c      	adds	r3, #60	; 0x3c
+ 8000f9e:	781b      	ldrb	r3, [r3, #0]
+ 8000fa0:	2b00      	cmp	r3, #0
+ 8000fa2:	d108      	bne.n	8000fb6 <HCD_HC_OUT_IRQHandler+0x2e0>
+        hhcd->hc[ch_num].do_ping = 1U;
+ 8000fa4:	687a      	ldr	r2, [r7, #4]
+ 8000fa6:	697b      	ldr	r3, [r7, #20]
+ 8000fa8:	212c      	movs	r1, #44	; 0x2c
+ 8000faa:	fb01 f303 	mul.w	r3, r1, r3
+ 8000fae:	4413      	add	r3, r2
+ 8000fb0:	333d      	adds	r3, #61	; 0x3d
+ 8000fb2:	2201      	movs	r2, #1
+ 8000fb4:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 8000fb6:	687b      	ldr	r3, [r7, #4]
+ 8000fb8:	681b      	ldr	r3, [r3, #0]
+ 8000fba:	697a      	ldr	r2, [r7, #20]
+ 8000fbc:	b2d2      	uxtb	r2, r2
+ 8000fbe:	4611      	mov	r1, r2
+ 8000fc0:	4618      	mov	r0, r3
+ 8000fc2:	f000 fc81 	bl	80018c8 <USB_HC_Halt>
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_NAK);
+ 8000fc6:	697b      	ldr	r3, [r7, #20]
+ 8000fc8:	015a      	lsls	r2, r3, #5
+ 8000fca:	69bb      	ldr	r3, [r7, #24]
+ 8000fcc:	4413      	add	r3, r2
+ 8000fce:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000fd2:	461a      	mov	r2, r3
+ 8000fd4:	2310      	movs	r3, #16
+ 8000fd6:	6093      	str	r3, [r2, #8]
+}
+ 8000fd8:	e1e2      	b.n	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_TXERR) == USB_OTG_HCINT_TXERR)
+ 8000fda:	697b      	ldr	r3, [r7, #20]
+ 8000fdc:	015a      	lsls	r2, r3, #5
+ 8000fde:	69bb      	ldr	r3, [r7, #24]
+ 8000fe0:	4413      	add	r3, r2
+ 8000fe2:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8000fe6:	689b      	ldr	r3, [r3, #8]
+ 8000fe8:	f003 0380 	and.w	r3, r3, #128	; 0x80
+ 8000fec:	2b80      	cmp	r3, #128	; 0x80
+ 8000fee:	d164      	bne.n	80010ba <HCD_HC_OUT_IRQHandler+0x3e4>
+    if (hhcd->Init.dma_enable == 0U)
+ 8000ff0:	687b      	ldr	r3, [r7, #4]
+ 8000ff2:	691b      	ldr	r3, [r3, #16]
+ 8000ff4:	2b00      	cmp	r3, #0
+ 8000ff6:	d111      	bne.n	800101c <HCD_HC_OUT_IRQHandler+0x346>
+      hhcd->hc[ch_num].state = HC_XACTERR;
+ 8000ff8:	687a      	ldr	r2, [r7, #4]
+ 8000ffa:	697b      	ldr	r3, [r7, #20]
+ 8000ffc:	212c      	movs	r1, #44	; 0x2c
+ 8000ffe:	fb01 f303 	mul.w	r3, r1, r3
+ 8001002:	4413      	add	r3, r2
+ 8001004:	3361      	adds	r3, #97	; 0x61
+ 8001006:	2206      	movs	r2, #6
+ 8001008:	701a      	strb	r2, [r3, #0]
+      (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 800100a:	687b      	ldr	r3, [r7, #4]
+ 800100c:	681b      	ldr	r3, [r3, #0]
+ 800100e:	697a      	ldr	r2, [r7, #20]
+ 8001010:	b2d2      	uxtb	r2, r2
+ 8001012:	4611      	mov	r1, r2
+ 8001014:	4618      	mov	r0, r3
+ 8001016:	f000 fc57 	bl	80018c8 <USB_HC_Halt>
+ 800101a:	e044      	b.n	80010a6 <HCD_HC_OUT_IRQHandler+0x3d0>
+      hhcd->hc[ch_num].ErrCnt++;
+ 800101c:	687a      	ldr	r2, [r7, #4]
+ 800101e:	697b      	ldr	r3, [r7, #20]
+ 8001020:	212c      	movs	r1, #44	; 0x2c
+ 8001022:	fb01 f303 	mul.w	r3, r1, r3
+ 8001026:	4413      	add	r3, r2
+ 8001028:	335c      	adds	r3, #92	; 0x5c
+ 800102a:	681b      	ldr	r3, [r3, #0]
+ 800102c:	1c5a      	adds	r2, r3, #1
+ 800102e:	6879      	ldr	r1, [r7, #4]
+ 8001030:	697b      	ldr	r3, [r7, #20]
+ 8001032:	202c      	movs	r0, #44	; 0x2c
+ 8001034:	fb00 f303 	mul.w	r3, r0, r3
+ 8001038:	440b      	add	r3, r1
+ 800103a:	335c      	adds	r3, #92	; 0x5c
+ 800103c:	601a      	str	r2, [r3, #0]
+      if (hhcd->hc[ch_num].ErrCnt > 2U)
+ 800103e:	687a      	ldr	r2, [r7, #4]
+ 8001040:	697b      	ldr	r3, [r7, #20]
+ 8001042:	212c      	movs	r1, #44	; 0x2c
+ 8001044:	fb01 f303 	mul.w	r3, r1, r3
+ 8001048:	4413      	add	r3, r2
+ 800104a:	335c      	adds	r3, #92	; 0x5c
+ 800104c:	681b      	ldr	r3, [r3, #0]
+ 800104e:	2b02      	cmp	r3, #2
+ 8001050:	d920      	bls.n	8001094 <HCD_HC_OUT_IRQHandler+0x3be>
+        hhcd->hc[ch_num].ErrCnt = 0U;
+ 8001052:	687a      	ldr	r2, [r7, #4]
+ 8001054:	697b      	ldr	r3, [r7, #20]
+ 8001056:	212c      	movs	r1, #44	; 0x2c
+ 8001058:	fb01 f303 	mul.w	r3, r1, r3
+ 800105c:	4413      	add	r3, r2
+ 800105e:	335c      	adds	r3, #92	; 0x5c
+ 8001060:	2200      	movs	r2, #0
+ 8001062:	601a      	str	r2, [r3, #0]
+        hhcd->hc[ch_num].urb_state = URB_ERROR;
+ 8001064:	687a      	ldr	r2, [r7, #4]
+ 8001066:	697b      	ldr	r3, [r7, #20]
+ 8001068:	212c      	movs	r1, #44	; 0x2c
+ 800106a:	fb01 f303 	mul.w	r3, r1, r3
+ 800106e:	4413      	add	r3, r2
+ 8001070:	3360      	adds	r3, #96	; 0x60
+ 8001072:	2204      	movs	r2, #4
+ 8001074:	701a      	strb	r2, [r3, #0]
+        HAL_HCD_HC_NotifyURBChange_Callback(hhcd, (uint8_t)ch_num, hhcd->hc[ch_num].urb_state);
+ 8001076:	697b      	ldr	r3, [r7, #20]
+ 8001078:	b2d9      	uxtb	r1, r3
+ 800107a:	687a      	ldr	r2, [r7, #4]
+ 800107c:	697b      	ldr	r3, [r7, #20]
+ 800107e:	202c      	movs	r0, #44	; 0x2c
+ 8001080:	fb00 f303 	mul.w	r3, r0, r3
+ 8001084:	4413      	add	r3, r2
+ 8001086:	3360      	adds	r3, #96	; 0x60
+ 8001088:	781b      	ldrb	r3, [r3, #0]
+ 800108a:	461a      	mov	r2, r3
+ 800108c:	6878      	ldr	r0, [r7, #4]
+ 800108e:	f000 fe72 	bl	8001d76 <HAL_HCD_HC_NotifyURBChange_Callback>
+ 8001092:	e008      	b.n	80010a6 <HCD_HC_OUT_IRQHandler+0x3d0>
+        hhcd->hc[ch_num].urb_state = URB_NOTREADY;
+ 8001094:	687a      	ldr	r2, [r7, #4]
+ 8001096:	697b      	ldr	r3, [r7, #20]
+ 8001098:	212c      	movs	r1, #44	; 0x2c
+ 800109a:	fb01 f303 	mul.w	r3, r1, r3
+ 800109e:	4413      	add	r3, r2
+ 80010a0:	3360      	adds	r3, #96	; 0x60
+ 80010a2:	2202      	movs	r2, #2
+ 80010a4:	701a      	strb	r2, [r3, #0]
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_TXERR);
+ 80010a6:	697b      	ldr	r3, [r7, #20]
+ 80010a8:	015a      	lsls	r2, r3, #5
+ 80010aa:	69bb      	ldr	r3, [r7, #24]
+ 80010ac:	4413      	add	r3, r2
+ 80010ae:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80010b2:	461a      	mov	r2, r3
+ 80010b4:	2380      	movs	r3, #128	; 0x80
+ 80010b6:	6093      	str	r3, [r2, #8]
+}
+ 80010b8:	e172      	b.n	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_DTERR) == USB_OTG_HCINT_DTERR)
+ 80010ba:	697b      	ldr	r3, [r7, #20]
+ 80010bc:	015a      	lsls	r2, r3, #5
+ 80010be:	69bb      	ldr	r3, [r7, #24]
+ 80010c0:	4413      	add	r3, r2
+ 80010c2:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80010c6:	689b      	ldr	r3, [r3, #8]
+ 80010c8:	f403 6380 	and.w	r3, r3, #1024	; 0x400
+ 80010cc:	f5b3 6f80 	cmp.w	r3, #1024	; 0x400
+ 80010d0:	d11b      	bne.n	800110a <HCD_HC_OUT_IRQHandler+0x434>
+    hhcd->hc[ch_num].state = HC_DATATGLERR;
+ 80010d2:	687a      	ldr	r2, [r7, #4]
+ 80010d4:	697b      	ldr	r3, [r7, #20]
+ 80010d6:	212c      	movs	r1, #44	; 0x2c
+ 80010d8:	fb01 f303 	mul.w	r3, r1, r3
+ 80010dc:	4413      	add	r3, r2
+ 80010de:	3361      	adds	r3, #97	; 0x61
+ 80010e0:	2208      	movs	r2, #8
+ 80010e2:	701a      	strb	r2, [r3, #0]
+    (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
+ 80010e4:	687b      	ldr	r3, [r7, #4]
+ 80010e6:	681b      	ldr	r3, [r3, #0]
+ 80010e8:	697a      	ldr	r2, [r7, #20]
+ 80010ea:	b2d2      	uxtb	r2, r2
+ 80010ec:	4611      	mov	r1, r2
+ 80010ee:	4618      	mov	r0, r3
+ 80010f0:	f000 fbea 	bl	80018c8 <USB_HC_Halt>
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_DTERR);
+ 80010f4:	697b      	ldr	r3, [r7, #20]
+ 80010f6:	015a      	lsls	r2, r3, #5
+ 80010f8:	69bb      	ldr	r3, [r7, #24]
+ 80010fa:	4413      	add	r3, r2
+ 80010fc:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001100:	461a      	mov	r2, r3
+ 8001102:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 8001106:	6093      	str	r3, [r2, #8]
+}
+ 8001108:	e14a      	b.n	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+  else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_CHH) == USB_OTG_HCINT_CHH)
+ 800110a:	697b      	ldr	r3, [r7, #20]
+ 800110c:	015a      	lsls	r2, r3, #5
+ 800110e:	69bb      	ldr	r3, [r7, #24]
+ 8001110:	4413      	add	r3, r2
+ 8001112:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001116:	689b      	ldr	r3, [r3, #8]
+ 8001118:	f003 0302 	and.w	r3, r3, #2
+ 800111c:	2b02      	cmp	r3, #2
+ 800111e:	f040 813f 	bne.w	80013a0 <HCD_HC_OUT_IRQHandler+0x6ca>
+    if (hhcd->hc[ch_num].state == HC_XFRC)
+ 8001122:	687a      	ldr	r2, [r7, #4]
+ 8001124:	697b      	ldr	r3, [r7, #20]
+ 8001126:	212c      	movs	r1, #44	; 0x2c
+ 8001128:	fb01 f303 	mul.w	r3, r1, r3
+ 800112c:	4413      	add	r3, r2
+ 800112e:	3361      	adds	r3, #97	; 0x61
+ 8001130:	781b      	ldrb	r3, [r3, #0]
+ 8001132:	2b01      	cmp	r3, #1
+ 8001134:	d17d      	bne.n	8001232 <HCD_HC_OUT_IRQHandler+0x55c>
+      hhcd->hc[ch_num].urb_state  = URB_DONE;
+ 8001136:	687a      	ldr	r2, [r7, #4]
+ 8001138:	697b      	ldr	r3, [r7, #20]
+ 800113a:	212c      	movs	r1, #44	; 0x2c
+ 800113c:	fb01 f303 	mul.w	r3, r1, r3
+ 8001140:	4413      	add	r3, r2
+ 8001142:	3360      	adds	r3, #96	; 0x60
+ 8001144:	2201      	movs	r2, #1
+ 8001146:	701a      	strb	r2, [r3, #0]
+      if ((hhcd->hc[ch_num].ep_type == EP_TYPE_BULK) ||
+ 8001148:	687a      	ldr	r2, [r7, #4]
+ 800114a:	697b      	ldr	r3, [r7, #20]
+ 800114c:	212c      	movs	r1, #44	; 0x2c
+ 800114e:	fb01 f303 	mul.w	r3, r1, r3
+ 8001152:	4413      	add	r3, r2
+ 8001154:	333f      	adds	r3, #63	; 0x3f
+ 8001156:	781b      	ldrb	r3, [r3, #0]
+ 8001158:	2b02      	cmp	r3, #2
+ 800115a:	d00a      	beq.n	8001172 <HCD_HC_OUT_IRQHandler+0x49c>
+          (hhcd->hc[ch_num].ep_type == EP_TYPE_INTR))
+ 800115c:	687a      	ldr	r2, [r7, #4]
+ 800115e:	697b      	ldr	r3, [r7, #20]
+ 8001160:	212c      	movs	r1, #44	; 0x2c
+ 8001162:	fb01 f303 	mul.w	r3, r1, r3
+ 8001166:	4413      	add	r3, r2
+ 8001168:	333f      	adds	r3, #63	; 0x3f
+ 800116a:	781b      	ldrb	r3, [r3, #0]
+      if ((hhcd->hc[ch_num].ep_type == EP_TYPE_BULK) ||
+ 800116c:	2b03      	cmp	r3, #3
+ 800116e:	f040 8100 	bne.w	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+        if (hhcd->Init.dma_enable == 0U)
+ 8001172:	687b      	ldr	r3, [r7, #4]
+ 8001174:	691b      	ldr	r3, [r3, #16]
+ 8001176:	2b00      	cmp	r3, #0
+ 8001178:	d113      	bne.n	80011a2 <HCD_HC_OUT_IRQHandler+0x4cc>
+          hhcd->hc[ch_num].toggle_out ^= 1U;
+ 800117a:	687a      	ldr	r2, [r7, #4]
+ 800117c:	697b      	ldr	r3, [r7, #20]
+ 800117e:	212c      	movs	r1, #44	; 0x2c
+ 8001180:	fb01 f303 	mul.w	r3, r1, r3
+ 8001184:	4413      	add	r3, r2
+ 8001186:	3355      	adds	r3, #85	; 0x55
+ 8001188:	781b      	ldrb	r3, [r3, #0]
+ 800118a:	f083 0301 	eor.w	r3, r3, #1
+ 800118e:	b2d8      	uxtb	r0, r3
+ 8001190:	687a      	ldr	r2, [r7, #4]
+ 8001192:	697b      	ldr	r3, [r7, #20]
+ 8001194:	212c      	movs	r1, #44	; 0x2c
+ 8001196:	fb01 f303 	mul.w	r3, r1, r3
+ 800119a:	4413      	add	r3, r2
+ 800119c:	3355      	adds	r3, #85	; 0x55
+ 800119e:	4602      	mov	r2, r0
+ 80011a0:	701a      	strb	r2, [r3, #0]
+        if ((hhcd->Init.dma_enable == 1U) && (hhcd->hc[ch_num].xfer_len > 0U))
+ 80011a2:	687b      	ldr	r3, [r7, #4]
+ 80011a4:	691b      	ldr	r3, [r3, #16]
+ 80011a6:	2b01      	cmp	r3, #1
+ 80011a8:	f040 80e3 	bne.w	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+ 80011ac:	687a      	ldr	r2, [r7, #4]
+ 80011ae:	697b      	ldr	r3, [r7, #20]
+ 80011b0:	212c      	movs	r1, #44	; 0x2c
+ 80011b2:	fb01 f303 	mul.w	r3, r1, r3
+ 80011b6:	4413      	add	r3, r2
+ 80011b8:	334c      	adds	r3, #76	; 0x4c
+ 80011ba:	681b      	ldr	r3, [r3, #0]
+ 80011bc:	2b00      	cmp	r3, #0
+ 80011be:	f000 80d8 	beq.w	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+          num_packets = (hhcd->hc[ch_num].xfer_len + hhcd->hc[ch_num].max_packet - 1U) / hhcd->hc[ch_num].max_packet;
+ 80011c2:	687a      	ldr	r2, [r7, #4]
+ 80011c4:	697b      	ldr	r3, [r7, #20]
+ 80011c6:	212c      	movs	r1, #44	; 0x2c
+ 80011c8:	fb01 f303 	mul.w	r3, r1, r3
+ 80011cc:	4413      	add	r3, r2
+ 80011ce:	334c      	adds	r3, #76	; 0x4c
+ 80011d0:	681b      	ldr	r3, [r3, #0]
+ 80011d2:	6879      	ldr	r1, [r7, #4]
+ 80011d4:	697a      	ldr	r2, [r7, #20]
+ 80011d6:	202c      	movs	r0, #44	; 0x2c
+ 80011d8:	fb00 f202 	mul.w	r2, r0, r2
+ 80011dc:	440a      	add	r2, r1
+ 80011de:	3240      	adds	r2, #64	; 0x40
+ 80011e0:	8812      	ldrh	r2, [r2, #0]
+ 80011e2:	4413      	add	r3, r2
+ 80011e4:	3b01      	subs	r3, #1
+ 80011e6:	6879      	ldr	r1, [r7, #4]
+ 80011e8:	697a      	ldr	r2, [r7, #20]
+ 80011ea:	202c      	movs	r0, #44	; 0x2c
+ 80011ec:	fb00 f202 	mul.w	r2, r0, r2
+ 80011f0:	440a      	add	r2, r1
+ 80011f2:	3240      	adds	r2, #64	; 0x40
+ 80011f4:	8812      	ldrh	r2, [r2, #0]
+ 80011f6:	fbb3 f3f2 	udiv	r3, r3, r2
+ 80011fa:	60fb      	str	r3, [r7, #12]
+          if ((num_packets & 1U) != 0U)
+ 80011fc:	68fb      	ldr	r3, [r7, #12]
+ 80011fe:	f003 0301 	and.w	r3, r3, #1
+ 8001202:	2b00      	cmp	r3, #0
+ 8001204:	f000 80b5 	beq.w	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+            hhcd->hc[ch_num].toggle_out ^= 1U;
+ 8001208:	687a      	ldr	r2, [r7, #4]
+ 800120a:	697b      	ldr	r3, [r7, #20]
+ 800120c:	212c      	movs	r1, #44	; 0x2c
+ 800120e:	fb01 f303 	mul.w	r3, r1, r3
+ 8001212:	4413      	add	r3, r2
+ 8001214:	3355      	adds	r3, #85	; 0x55
+ 8001216:	781b      	ldrb	r3, [r3, #0]
+ 8001218:	f083 0301 	eor.w	r3, r3, #1
+ 800121c:	b2d8      	uxtb	r0, r3
+ 800121e:	687a      	ldr	r2, [r7, #4]
+ 8001220:	697b      	ldr	r3, [r7, #20]
+ 8001222:	212c      	movs	r1, #44	; 0x2c
+ 8001224:	fb01 f303 	mul.w	r3, r1, r3
+ 8001228:	4413      	add	r3, r2
+ 800122a:	3355      	adds	r3, #85	; 0x55
+ 800122c:	4602      	mov	r2, r0
+ 800122e:	701a      	strb	r2, [r3, #0]
+ 8001230:	e09f      	b.n	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+    else if (hhcd->hc[ch_num].state == HC_NAK)
+ 8001232:	687a      	ldr	r2, [r7, #4]
+ 8001234:	697b      	ldr	r3, [r7, #20]
+ 8001236:	212c      	movs	r1, #44	; 0x2c
+ 8001238:	fb01 f303 	mul.w	r3, r1, r3
+ 800123c:	4413      	add	r3, r2
+ 800123e:	3361      	adds	r3, #97	; 0x61
+ 8001240:	781b      	ldrb	r3, [r3, #0]
+ 8001242:	2b03      	cmp	r3, #3
+ 8001244:	d109      	bne.n	800125a <HCD_HC_OUT_IRQHandler+0x584>
+      hhcd->hc[ch_num].urb_state = URB_NOTREADY;
+ 8001246:	687a      	ldr	r2, [r7, #4]
+ 8001248:	697b      	ldr	r3, [r7, #20]
+ 800124a:	212c      	movs	r1, #44	; 0x2c
+ 800124c:	fb01 f303 	mul.w	r3, r1, r3
+ 8001250:	4413      	add	r3, r2
+ 8001252:	3360      	adds	r3, #96	; 0x60
+ 8001254:	2202      	movs	r2, #2
+ 8001256:	701a      	strb	r2, [r3, #0]
+ 8001258:	e08b      	b.n	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+    else if (hhcd->hc[ch_num].state == HC_NYET)
+ 800125a:	687a      	ldr	r2, [r7, #4]
+ 800125c:	697b      	ldr	r3, [r7, #20]
+ 800125e:	212c      	movs	r1, #44	; 0x2c
+ 8001260:	fb01 f303 	mul.w	r3, r1, r3
+ 8001264:	4413      	add	r3, r2
+ 8001266:	3361      	adds	r3, #97	; 0x61
+ 8001268:	781b      	ldrb	r3, [r3, #0]
+ 800126a:	2b04      	cmp	r3, #4
+ 800126c:	d109      	bne.n	8001282 <HCD_HC_OUT_IRQHandler+0x5ac>
+      hhcd->hc[ch_num].urb_state  = URB_NOTREADY;
+ 800126e:	687a      	ldr	r2, [r7, #4]
+ 8001270:	697b      	ldr	r3, [r7, #20]
+ 8001272:	212c      	movs	r1, #44	; 0x2c
+ 8001274:	fb01 f303 	mul.w	r3, r1, r3
+ 8001278:	4413      	add	r3, r2
+ 800127a:	3360      	adds	r3, #96	; 0x60
+ 800127c:	2202      	movs	r2, #2
+ 800127e:	701a      	strb	r2, [r3, #0]
+ 8001280:	e077      	b.n	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+    else if (hhcd->hc[ch_num].state == HC_STALL)
+ 8001282:	687a      	ldr	r2, [r7, #4]
+ 8001284:	697b      	ldr	r3, [r7, #20]
+ 8001286:	212c      	movs	r1, #44	; 0x2c
+ 8001288:	fb01 f303 	mul.w	r3, r1, r3
+ 800128c:	4413      	add	r3, r2
+ 800128e:	3361      	adds	r3, #97	; 0x61
+ 8001290:	781b      	ldrb	r3, [r3, #0]
+ 8001292:	2b05      	cmp	r3, #5
+ 8001294:	d109      	bne.n	80012aa <HCD_HC_OUT_IRQHandler+0x5d4>
+      hhcd->hc[ch_num].urb_state  = URB_STALL;
+ 8001296:	687a      	ldr	r2, [r7, #4]
+ 8001298:	697b      	ldr	r3, [r7, #20]
+ 800129a:	212c      	movs	r1, #44	; 0x2c
+ 800129c:	fb01 f303 	mul.w	r3, r1, r3
+ 80012a0:	4413      	add	r3, r2
+ 80012a2:	3360      	adds	r3, #96	; 0x60
+ 80012a4:	2205      	movs	r2, #5
+ 80012a6:	701a      	strb	r2, [r3, #0]
+ 80012a8:	e063      	b.n	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+    else if ((hhcd->hc[ch_num].state == HC_XACTERR) ||
+ 80012aa:	687a      	ldr	r2, [r7, #4]
+ 80012ac:	697b      	ldr	r3, [r7, #20]
+ 80012ae:	212c      	movs	r1, #44	; 0x2c
+ 80012b0:	fb01 f303 	mul.w	r3, r1, r3
+ 80012b4:	4413      	add	r3, r2
+ 80012b6:	3361      	adds	r3, #97	; 0x61
+ 80012b8:	781b      	ldrb	r3, [r3, #0]
+ 80012ba:	2b06      	cmp	r3, #6
+ 80012bc:	d009      	beq.n	80012d2 <HCD_HC_OUT_IRQHandler+0x5fc>
+             (hhcd->hc[ch_num].state == HC_DATATGLERR))
+ 80012be:	687a      	ldr	r2, [r7, #4]
+ 80012c0:	697b      	ldr	r3, [r7, #20]
+ 80012c2:	212c      	movs	r1, #44	; 0x2c
+ 80012c4:	fb01 f303 	mul.w	r3, r1, r3
+ 80012c8:	4413      	add	r3, r2
+ 80012ca:	3361      	adds	r3, #97	; 0x61
+ 80012cc:	781b      	ldrb	r3, [r3, #0]
+    else if ((hhcd->hc[ch_num].state == HC_XACTERR) ||
+ 80012ce:	2b08      	cmp	r3, #8
+ 80012d0:	d14f      	bne.n	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+      hhcd->hc[ch_num].ErrCnt++;
+ 80012d2:	687a      	ldr	r2, [r7, #4]
+ 80012d4:	697b      	ldr	r3, [r7, #20]
+ 80012d6:	212c      	movs	r1, #44	; 0x2c
+ 80012d8:	fb01 f303 	mul.w	r3, r1, r3
+ 80012dc:	4413      	add	r3, r2
+ 80012de:	335c      	adds	r3, #92	; 0x5c
+ 80012e0:	681b      	ldr	r3, [r3, #0]
+ 80012e2:	1c5a      	adds	r2, r3, #1
+ 80012e4:	6879      	ldr	r1, [r7, #4]
+ 80012e6:	697b      	ldr	r3, [r7, #20]
+ 80012e8:	202c      	movs	r0, #44	; 0x2c
+ 80012ea:	fb00 f303 	mul.w	r3, r0, r3
+ 80012ee:	440b      	add	r3, r1
+ 80012f0:	335c      	adds	r3, #92	; 0x5c
+ 80012f2:	601a      	str	r2, [r3, #0]
+      if (hhcd->hc[ch_num].ErrCnt > 2U)
+ 80012f4:	687a      	ldr	r2, [r7, #4]
+ 80012f6:	697b      	ldr	r3, [r7, #20]
+ 80012f8:	212c      	movs	r1, #44	; 0x2c
+ 80012fa:	fb01 f303 	mul.w	r3, r1, r3
+ 80012fe:	4413      	add	r3, r2
+ 8001300:	335c      	adds	r3, #92	; 0x5c
+ 8001302:	681b      	ldr	r3, [r3, #0]
+ 8001304:	2b02      	cmp	r3, #2
+ 8001306:	d912      	bls.n	800132e <HCD_HC_OUT_IRQHandler+0x658>
+        hhcd->hc[ch_num].ErrCnt = 0U;
+ 8001308:	687a      	ldr	r2, [r7, #4]
+ 800130a:	697b      	ldr	r3, [r7, #20]
+ 800130c:	212c      	movs	r1, #44	; 0x2c
+ 800130e:	fb01 f303 	mul.w	r3, r1, r3
+ 8001312:	4413      	add	r3, r2
+ 8001314:	335c      	adds	r3, #92	; 0x5c
+ 8001316:	2200      	movs	r2, #0
+ 8001318:	601a      	str	r2, [r3, #0]
+        hhcd->hc[ch_num].urb_state = URB_ERROR;
+ 800131a:	687a      	ldr	r2, [r7, #4]
+ 800131c:	697b      	ldr	r3, [r7, #20]
+ 800131e:	212c      	movs	r1, #44	; 0x2c
+ 8001320:	fb01 f303 	mul.w	r3, r1, r3
+ 8001324:	4413      	add	r3, r2
+ 8001326:	3360      	adds	r3, #96	; 0x60
+ 8001328:	2204      	movs	r2, #4
+ 800132a:	701a      	strb	r2, [r3, #0]
+ 800132c:	e021      	b.n	8001372 <HCD_HC_OUT_IRQHandler+0x69c>
+        hhcd->hc[ch_num].urb_state = URB_NOTREADY;
+ 800132e:	687a      	ldr	r2, [r7, #4]
+ 8001330:	697b      	ldr	r3, [r7, #20]
+ 8001332:	212c      	movs	r1, #44	; 0x2c
+ 8001334:	fb01 f303 	mul.w	r3, r1, r3
+ 8001338:	4413      	add	r3, r2
+ 800133a:	3360      	adds	r3, #96	; 0x60
+ 800133c:	2202      	movs	r2, #2
+ 800133e:	701a      	strb	r2, [r3, #0]
+        tmpreg = USBx_HC(ch_num)->HCCHAR;
+ 8001340:	697b      	ldr	r3, [r7, #20]
+ 8001342:	015a      	lsls	r2, r3, #5
+ 8001344:	69bb      	ldr	r3, [r7, #24]
+ 8001346:	4413      	add	r3, r2
+ 8001348:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800134c:	681b      	ldr	r3, [r3, #0]
+ 800134e:	613b      	str	r3, [r7, #16]
+        tmpreg &= ~USB_OTG_HCCHAR_CHDIS;
+ 8001350:	693b      	ldr	r3, [r7, #16]
+ 8001352:	f023 4380 	bic.w	r3, r3, #1073741824	; 0x40000000
+ 8001356:	613b      	str	r3, [r7, #16]
+        tmpreg |= USB_OTG_HCCHAR_CHENA;
+ 8001358:	693b      	ldr	r3, [r7, #16]
+ 800135a:	f043 4300 	orr.w	r3, r3, #2147483648	; 0x80000000
+ 800135e:	613b      	str	r3, [r7, #16]
+        USBx_HC(ch_num)->HCCHAR = tmpreg;
+ 8001360:	697b      	ldr	r3, [r7, #20]
+ 8001362:	015a      	lsls	r2, r3, #5
+ 8001364:	69bb      	ldr	r3, [r7, #24]
+ 8001366:	4413      	add	r3, r2
+ 8001368:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800136c:	461a      	mov	r2, r3
+ 800136e:	693b      	ldr	r3, [r7, #16]
+ 8001370:	6013      	str	r3, [r2, #0]
+    __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_CHH);
+ 8001372:	697b      	ldr	r3, [r7, #20]
+ 8001374:	015a      	lsls	r2, r3, #5
+ 8001376:	69bb      	ldr	r3, [r7, #24]
+ 8001378:	4413      	add	r3, r2
+ 800137a:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800137e:	461a      	mov	r2, r3
+ 8001380:	2302      	movs	r3, #2
+ 8001382:	6093      	str	r3, [r2, #8]
+    HAL_HCD_HC_NotifyURBChange_Callback(hhcd, (uint8_t)ch_num, hhcd->hc[ch_num].urb_state);
+ 8001384:	697b      	ldr	r3, [r7, #20]
+ 8001386:	b2d9      	uxtb	r1, r3
+ 8001388:	687a      	ldr	r2, [r7, #4]
+ 800138a:	697b      	ldr	r3, [r7, #20]
+ 800138c:	202c      	movs	r0, #44	; 0x2c
+ 800138e:	fb00 f303 	mul.w	r3, r0, r3
+ 8001392:	4413      	add	r3, r2
+ 8001394:	3360      	adds	r3, #96	; 0x60
+ 8001396:	781b      	ldrb	r3, [r3, #0]
+ 8001398:	461a      	mov	r2, r3
+ 800139a:	6878      	ldr	r0, [r7, #4]
+ 800139c:	f000 fceb 	bl	8001d76 <HAL_HCD_HC_NotifyURBChange_Callback>
+}
+ 80013a0:	bf00      	nop
+ 80013a2:	3720      	adds	r7, #32
+ 80013a4:	46bd      	mov	sp, r7
+ 80013a6:	bd80      	pop	{r7, pc}
+
+080013a8 <HCD_RXQLVL_IRQHandler>:
+  * @brief  Handle Rx Queue Level interrupt requests.
+  * @param  hhcd HCD handle
+  * @retval none
+  */
+static void HCD_RXQLVL_IRQHandler(HCD_HandleTypeDef *hhcd)
+{
+ 80013a8:	b580      	push	{r7, lr}
+ 80013aa:	b08a      	sub	sp, #40	; 0x28
+ 80013ac:	af00      	add	r7, sp, #0
+ 80013ae:	6078      	str	r0, [r7, #4]
+  USB_OTG_GlobalTypeDef *USBx = hhcd->Instance;
+ 80013b0:	687b      	ldr	r3, [r7, #4]
+ 80013b2:	681b      	ldr	r3, [r3, #0]
+ 80013b4:	627b      	str	r3, [r7, #36]	; 0x24
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 80013b6:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 80013b8:	623b      	str	r3, [r7, #32]
+  uint32_t GrxstspReg;
+  uint32_t xferSizePktCnt;
+  uint32_t tmpreg;
+  uint32_t ch_num;
+
+  GrxstspReg = hhcd->Instance->GRXSTSP;
+ 80013ba:	687b      	ldr	r3, [r7, #4]
+ 80013bc:	681b      	ldr	r3, [r3, #0]
+ 80013be:	6a1b      	ldr	r3, [r3, #32]
+ 80013c0:	61fb      	str	r3, [r7, #28]
+  ch_num = GrxstspReg & USB_OTG_GRXSTSP_EPNUM;
+ 80013c2:	69fb      	ldr	r3, [r7, #28]
+ 80013c4:	f003 030f 	and.w	r3, r3, #15
+ 80013c8:	61bb      	str	r3, [r7, #24]
+  pktsts = (GrxstspReg & USB_OTG_GRXSTSP_PKTSTS) >> 17;
+ 80013ca:	69fb      	ldr	r3, [r7, #28]
+ 80013cc:	0c5b      	lsrs	r3, r3, #17
+ 80013ce:	f003 030f 	and.w	r3, r3, #15
+ 80013d2:	617b      	str	r3, [r7, #20]
+  pktcnt = (GrxstspReg & USB_OTG_GRXSTSP_BCNT) >> 4;
+ 80013d4:	69fb      	ldr	r3, [r7, #28]
+ 80013d6:	091b      	lsrs	r3, r3, #4
+ 80013d8:	f3c3 030a 	ubfx	r3, r3, #0, #11
+ 80013dc:	613b      	str	r3, [r7, #16]
+
+  switch (pktsts)
+ 80013de:	697b      	ldr	r3, [r7, #20]
+ 80013e0:	2b02      	cmp	r3, #2
+ 80013e2:	d004      	beq.n	80013ee <HCD_RXQLVL_IRQHandler+0x46>
+ 80013e4:	697b      	ldr	r3, [r7, #20]
+ 80013e6:	2b05      	cmp	r3, #5
+ 80013e8:	f000 80a9 	beq.w	800153e <HCD_RXQLVL_IRQHandler+0x196>
+      break;
+
+    case GRXSTS_PKTSTS_IN_XFER_COMP:
+    case GRXSTS_PKTSTS_CH_HALTED:
+    default:
+      break;
+ 80013ec:	e0aa      	b.n	8001544 <HCD_RXQLVL_IRQHandler+0x19c>
+      if ((pktcnt > 0U) && (hhcd->hc[ch_num].xfer_buff != (void *)0))
+ 80013ee:	693b      	ldr	r3, [r7, #16]
+ 80013f0:	2b00      	cmp	r3, #0
+ 80013f2:	f000 80a6 	beq.w	8001542 <HCD_RXQLVL_IRQHandler+0x19a>
+ 80013f6:	687a      	ldr	r2, [r7, #4]
+ 80013f8:	69bb      	ldr	r3, [r7, #24]
+ 80013fa:	212c      	movs	r1, #44	; 0x2c
+ 80013fc:	fb01 f303 	mul.w	r3, r1, r3
+ 8001400:	4413      	add	r3, r2
+ 8001402:	3344      	adds	r3, #68	; 0x44
+ 8001404:	681b      	ldr	r3, [r3, #0]
+ 8001406:	2b00      	cmp	r3, #0
+ 8001408:	f000 809b 	beq.w	8001542 <HCD_RXQLVL_IRQHandler+0x19a>
+        if ((hhcd->hc[ch_num].xfer_count + pktcnt) <= hhcd->hc[ch_num].xfer_len)
+ 800140c:	687a      	ldr	r2, [r7, #4]
+ 800140e:	69bb      	ldr	r3, [r7, #24]
+ 8001410:	212c      	movs	r1, #44	; 0x2c
+ 8001412:	fb01 f303 	mul.w	r3, r1, r3
+ 8001416:	4413      	add	r3, r2
+ 8001418:	3350      	adds	r3, #80	; 0x50
+ 800141a:	681a      	ldr	r2, [r3, #0]
+ 800141c:	693b      	ldr	r3, [r7, #16]
+ 800141e:	441a      	add	r2, r3
+ 8001420:	6879      	ldr	r1, [r7, #4]
+ 8001422:	69bb      	ldr	r3, [r7, #24]
+ 8001424:	202c      	movs	r0, #44	; 0x2c
+ 8001426:	fb00 f303 	mul.w	r3, r0, r3
+ 800142a:	440b      	add	r3, r1
+ 800142c:	334c      	adds	r3, #76	; 0x4c
+ 800142e:	681b      	ldr	r3, [r3, #0]
+ 8001430:	429a      	cmp	r2, r3
+ 8001432:	d87a      	bhi.n	800152a <HCD_RXQLVL_IRQHandler+0x182>
+          (void)USB_ReadPacket(hhcd->Instance,
+ 8001434:	687b      	ldr	r3, [r7, #4]
+ 8001436:	6818      	ldr	r0, [r3, #0]
+ 8001438:	687a      	ldr	r2, [r7, #4]
+ 800143a:	69bb      	ldr	r3, [r7, #24]
+ 800143c:	212c      	movs	r1, #44	; 0x2c
+ 800143e:	fb01 f303 	mul.w	r3, r1, r3
+ 8001442:	4413      	add	r3, r2
+ 8001444:	3344      	adds	r3, #68	; 0x44
+ 8001446:	681b      	ldr	r3, [r3, #0]
+ 8001448:	693a      	ldr	r2, [r7, #16]
+ 800144a:	b292      	uxth	r2, r2
+ 800144c:	4619      	mov	r1, r3
+ 800144e:	f000 f977 	bl	8001740 <USB_ReadPacket>
+          hhcd->hc[ch_num].xfer_buff += pktcnt;
+ 8001452:	687a      	ldr	r2, [r7, #4]
+ 8001454:	69bb      	ldr	r3, [r7, #24]
+ 8001456:	212c      	movs	r1, #44	; 0x2c
+ 8001458:	fb01 f303 	mul.w	r3, r1, r3
+ 800145c:	4413      	add	r3, r2
+ 800145e:	3344      	adds	r3, #68	; 0x44
+ 8001460:	681a      	ldr	r2, [r3, #0]
+ 8001462:	693b      	ldr	r3, [r7, #16]
+ 8001464:	441a      	add	r2, r3
+ 8001466:	6879      	ldr	r1, [r7, #4]
+ 8001468:	69bb      	ldr	r3, [r7, #24]
+ 800146a:	202c      	movs	r0, #44	; 0x2c
+ 800146c:	fb00 f303 	mul.w	r3, r0, r3
+ 8001470:	440b      	add	r3, r1
+ 8001472:	3344      	adds	r3, #68	; 0x44
+ 8001474:	601a      	str	r2, [r3, #0]
+          hhcd->hc[ch_num].xfer_count += pktcnt;
+ 8001476:	687a      	ldr	r2, [r7, #4]
+ 8001478:	69bb      	ldr	r3, [r7, #24]
+ 800147a:	212c      	movs	r1, #44	; 0x2c
+ 800147c:	fb01 f303 	mul.w	r3, r1, r3
+ 8001480:	4413      	add	r3, r2
+ 8001482:	3350      	adds	r3, #80	; 0x50
+ 8001484:	681a      	ldr	r2, [r3, #0]
+ 8001486:	693b      	ldr	r3, [r7, #16]
+ 8001488:	441a      	add	r2, r3
+ 800148a:	6879      	ldr	r1, [r7, #4]
+ 800148c:	69bb      	ldr	r3, [r7, #24]
+ 800148e:	202c      	movs	r0, #44	; 0x2c
+ 8001490:	fb00 f303 	mul.w	r3, r0, r3
+ 8001494:	440b      	add	r3, r1
+ 8001496:	3350      	adds	r3, #80	; 0x50
+ 8001498:	601a      	str	r2, [r3, #0]
+          xferSizePktCnt = (USBx_HC(ch_num)->HCTSIZ & USB_OTG_HCTSIZ_PKTCNT) >> 19;
+ 800149a:	69bb      	ldr	r3, [r7, #24]
+ 800149c:	015a      	lsls	r2, r3, #5
+ 800149e:	6a3b      	ldr	r3, [r7, #32]
+ 80014a0:	4413      	add	r3, r2
+ 80014a2:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80014a6:	691b      	ldr	r3, [r3, #16]
+ 80014a8:	0cdb      	lsrs	r3, r3, #19
+ 80014aa:	f3c3 0309 	ubfx	r3, r3, #0, #10
+ 80014ae:	60fb      	str	r3, [r7, #12]
+          if ((hhcd->hc[ch_num].max_packet == pktcnt) && (xferSizePktCnt > 0U))
+ 80014b0:	687a      	ldr	r2, [r7, #4]
+ 80014b2:	69bb      	ldr	r3, [r7, #24]
+ 80014b4:	212c      	movs	r1, #44	; 0x2c
+ 80014b6:	fb01 f303 	mul.w	r3, r1, r3
+ 80014ba:	4413      	add	r3, r2
+ 80014bc:	3340      	adds	r3, #64	; 0x40
+ 80014be:	881b      	ldrh	r3, [r3, #0]
+ 80014c0:	461a      	mov	r2, r3
+ 80014c2:	693b      	ldr	r3, [r7, #16]
+ 80014c4:	4293      	cmp	r3, r2
+ 80014c6:	d13c      	bne.n	8001542 <HCD_RXQLVL_IRQHandler+0x19a>
+ 80014c8:	68fb      	ldr	r3, [r7, #12]
+ 80014ca:	2b00      	cmp	r3, #0
+ 80014cc:	d039      	beq.n	8001542 <HCD_RXQLVL_IRQHandler+0x19a>
+            tmpreg = USBx_HC(ch_num)->HCCHAR;
+ 80014ce:	69bb      	ldr	r3, [r7, #24]
+ 80014d0:	015a      	lsls	r2, r3, #5
+ 80014d2:	6a3b      	ldr	r3, [r7, #32]
+ 80014d4:	4413      	add	r3, r2
+ 80014d6:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80014da:	681b      	ldr	r3, [r3, #0]
+ 80014dc:	60bb      	str	r3, [r7, #8]
+            tmpreg &= ~USB_OTG_HCCHAR_CHDIS;
+ 80014de:	68bb      	ldr	r3, [r7, #8]
+ 80014e0:	f023 4380 	bic.w	r3, r3, #1073741824	; 0x40000000
+ 80014e4:	60bb      	str	r3, [r7, #8]
+            tmpreg |= USB_OTG_HCCHAR_CHENA;
+ 80014e6:	68bb      	ldr	r3, [r7, #8]
+ 80014e8:	f043 4300 	orr.w	r3, r3, #2147483648	; 0x80000000
+ 80014ec:	60bb      	str	r3, [r7, #8]
+            USBx_HC(ch_num)->HCCHAR = tmpreg;
+ 80014ee:	69bb      	ldr	r3, [r7, #24]
+ 80014f0:	015a      	lsls	r2, r3, #5
+ 80014f2:	6a3b      	ldr	r3, [r7, #32]
+ 80014f4:	4413      	add	r3, r2
+ 80014f6:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80014fa:	461a      	mov	r2, r3
+ 80014fc:	68bb      	ldr	r3, [r7, #8]
+ 80014fe:	6013      	str	r3, [r2, #0]
+            hhcd->hc[ch_num].toggle_in ^= 1U;
+ 8001500:	687a      	ldr	r2, [r7, #4]
+ 8001502:	69bb      	ldr	r3, [r7, #24]
+ 8001504:	212c      	movs	r1, #44	; 0x2c
+ 8001506:	fb01 f303 	mul.w	r3, r1, r3
+ 800150a:	4413      	add	r3, r2
+ 800150c:	3354      	adds	r3, #84	; 0x54
+ 800150e:	781b      	ldrb	r3, [r3, #0]
+ 8001510:	f083 0301 	eor.w	r3, r3, #1
+ 8001514:	b2d8      	uxtb	r0, r3
+ 8001516:	687a      	ldr	r2, [r7, #4]
+ 8001518:	69bb      	ldr	r3, [r7, #24]
+ 800151a:	212c      	movs	r1, #44	; 0x2c
+ 800151c:	fb01 f303 	mul.w	r3, r1, r3
+ 8001520:	4413      	add	r3, r2
+ 8001522:	3354      	adds	r3, #84	; 0x54
+ 8001524:	4602      	mov	r2, r0
+ 8001526:	701a      	strb	r2, [r3, #0]
+      break;
+ 8001528:	e00b      	b.n	8001542 <HCD_RXQLVL_IRQHandler+0x19a>
+          hhcd->hc[ch_num].urb_state = URB_ERROR;
+ 800152a:	687a      	ldr	r2, [r7, #4]
+ 800152c:	69bb      	ldr	r3, [r7, #24]
+ 800152e:	212c      	movs	r1, #44	; 0x2c
+ 8001530:	fb01 f303 	mul.w	r3, r1, r3
+ 8001534:	4413      	add	r3, r2
+ 8001536:	3360      	adds	r3, #96	; 0x60
+ 8001538:	2204      	movs	r2, #4
+ 800153a:	701a      	strb	r2, [r3, #0]
+      break;
+ 800153c:	e001      	b.n	8001542 <HCD_RXQLVL_IRQHandler+0x19a>
+      break;
+ 800153e:	bf00      	nop
+ 8001540:	e000      	b.n	8001544 <HCD_RXQLVL_IRQHandler+0x19c>
+      break;
+ 8001542:	bf00      	nop
+  }
+}
+ 8001544:	bf00      	nop
+ 8001546:	3728      	adds	r7, #40	; 0x28
+ 8001548:	46bd      	mov	sp, r7
+ 800154a:	bd80      	pop	{r7, pc}
+
+0800154c <HCD_Port_IRQHandler>:
+  * @brief  Handle Host Port interrupt requests.
+  * @param  hhcd HCD handle
+  * @retval None
+  */
+static void HCD_Port_IRQHandler(HCD_HandleTypeDef *hhcd)
+{
+ 800154c:	b580      	push	{r7, lr}
+ 800154e:	b086      	sub	sp, #24
+ 8001550:	af00      	add	r7, sp, #0
+ 8001552:	6078      	str	r0, [r7, #4]
+  USB_OTG_GlobalTypeDef *USBx = hhcd->Instance;
+ 8001554:	687b      	ldr	r3, [r7, #4]
+ 8001556:	681b      	ldr	r3, [r3, #0]
+ 8001558:	617b      	str	r3, [r7, #20]
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 800155a:	697b      	ldr	r3, [r7, #20]
+ 800155c:	613b      	str	r3, [r7, #16]
+  __IO uint32_t hprt0;
+  __IO uint32_t hprt0_dup;
+
+  /* Handle Host Port Interrupts */
+  hprt0 = USBx_HPRT0;
+ 800155e:	693b      	ldr	r3, [r7, #16]
+ 8001560:	f503 6388 	add.w	r3, r3, #1088	; 0x440
+ 8001564:	681b      	ldr	r3, [r3, #0]
+ 8001566:	60fb      	str	r3, [r7, #12]
+  hprt0_dup = USBx_HPRT0;
+ 8001568:	693b      	ldr	r3, [r7, #16]
+ 800156a:	f503 6388 	add.w	r3, r3, #1088	; 0x440
+ 800156e:	681b      	ldr	r3, [r3, #0]
+ 8001570:	60bb      	str	r3, [r7, #8]
+
+  hprt0_dup &= ~(USB_OTG_HPRT_PENA | USB_OTG_HPRT_PCDET | \
+ 8001572:	68bb      	ldr	r3, [r7, #8]
+ 8001574:	f023 032e 	bic.w	r3, r3, #46	; 0x2e
+ 8001578:	60bb      	str	r3, [r7, #8]
+                 USB_OTG_HPRT_PENCHNG | USB_OTG_HPRT_POCCHNG);
+
+  /* Check whether Port Connect detected */
+  if ((hprt0 & USB_OTG_HPRT_PCDET) == USB_OTG_HPRT_PCDET)
+ 800157a:	68fb      	ldr	r3, [r7, #12]
+ 800157c:	f003 0302 	and.w	r3, r3, #2
+ 8001580:	2b02      	cmp	r3, #2
+ 8001582:	d10b      	bne.n	800159c <HCD_Port_IRQHandler+0x50>
+  {
+    if ((hprt0 & USB_OTG_HPRT_PCSTS) == USB_OTG_HPRT_PCSTS)
+ 8001584:	68fb      	ldr	r3, [r7, #12]
+ 8001586:	f003 0301 	and.w	r3, r3, #1
+ 800158a:	2b01      	cmp	r3, #1
+ 800158c:	d102      	bne.n	8001594 <HCD_Port_IRQHandler+0x48>
+    {
+#if (USE_HAL_HCD_REGISTER_CALLBACKS == 1U)
+      hhcd->ConnectCallback(hhcd);
+#else
+      HAL_HCD_Connect_Callback(hhcd);
+ 800158e:	6878      	ldr	r0, [r7, #4]
+ 8001590:	f000 fbd5 	bl	8001d3e <HAL_HCD_Connect_Callback>
+#endif /* USE_HAL_HCD_REGISTER_CALLBACKS */
+    }
+    hprt0_dup |= USB_OTG_HPRT_PCDET;
+ 8001594:	68bb      	ldr	r3, [r7, #8]
+ 8001596:	f043 0302 	orr.w	r3, r3, #2
+ 800159a:	60bb      	str	r3, [r7, #8]
+  }
+
+  /* Check whether Port Enable Changed */
+  if ((hprt0 & USB_OTG_HPRT_PENCHNG) == USB_OTG_HPRT_PENCHNG)
+ 800159c:	68fb      	ldr	r3, [r7, #12]
+ 800159e:	f003 0308 	and.w	r3, r3, #8
+ 80015a2:	2b08      	cmp	r3, #8
+ 80015a4:	d132      	bne.n	800160c <HCD_Port_IRQHandler+0xc0>
+  {
+    hprt0_dup |= USB_OTG_HPRT_PENCHNG;
+ 80015a6:	68bb      	ldr	r3, [r7, #8]
+ 80015a8:	f043 0308 	orr.w	r3, r3, #8
+ 80015ac:	60bb      	str	r3, [r7, #8]
+
+    if ((hprt0 & USB_OTG_HPRT_PENA) == USB_OTG_HPRT_PENA)
+ 80015ae:	68fb      	ldr	r3, [r7, #12]
+ 80015b0:	f003 0304 	and.w	r3, r3, #4
+ 80015b4:	2b04      	cmp	r3, #4
+ 80015b6:	d126      	bne.n	8001606 <HCD_Port_IRQHandler+0xba>
+    {
+      if (hhcd->Init.phy_itface  == USB_OTG_EMBEDDED_PHY)
+ 80015b8:	687b      	ldr	r3, [r7, #4]
+ 80015ba:	699b      	ldr	r3, [r3, #24]
+ 80015bc:	2b02      	cmp	r3, #2
+ 80015be:	d113      	bne.n	80015e8 <HCD_Port_IRQHandler+0x9c>
+      {
+        if ((hprt0 & USB_OTG_HPRT_PSPD) == (HPRT0_PRTSPD_LOW_SPEED << 17))
+ 80015c0:	68fb      	ldr	r3, [r7, #12]
+ 80015c2:	f403 23c0 	and.w	r3, r3, #393216	; 0x60000
+ 80015c6:	f5b3 2f80 	cmp.w	r3, #262144	; 0x40000
+ 80015ca:	d106      	bne.n	80015da <HCD_Port_IRQHandler+0x8e>
+        {
+          (void)USB_InitFSLSPClkSel(hhcd->Instance, HCFG_6_MHZ);
+ 80015cc:	687b      	ldr	r3, [r7, #4]
+ 80015ce:	681b      	ldr	r3, [r3, #0]
+ 80015d0:	2102      	movs	r1, #2
+ 80015d2:	4618      	mov	r0, r3
+ 80015d4:	f000 f92d 	bl	8001832 <USB_InitFSLSPClkSel>
+ 80015d8:	e011      	b.n	80015fe <HCD_Port_IRQHandler+0xb2>
+        }
+        else
+        {
+          (void)USB_InitFSLSPClkSel(hhcd->Instance, HCFG_48_MHZ);
+ 80015da:	687b      	ldr	r3, [r7, #4]
+ 80015dc:	681b      	ldr	r3, [r3, #0]
+ 80015de:	2101      	movs	r1, #1
+ 80015e0:	4618      	mov	r0, r3
+ 80015e2:	f000 f926 	bl	8001832 <USB_InitFSLSPClkSel>
+ 80015e6:	e00a      	b.n	80015fe <HCD_Port_IRQHandler+0xb2>
+        }
+      }
+      else
+      {
+        if (hhcd->Init.speed == HCD_SPEED_FULL)
+ 80015e8:	687b      	ldr	r3, [r7, #4]
+ 80015ea:	68db      	ldr	r3, [r3, #12]
+ 80015ec:	2b01      	cmp	r3, #1
+ 80015ee:	d106      	bne.n	80015fe <HCD_Port_IRQHandler+0xb2>
+        {
+          USBx_HOST->HFIR = 60000U;
+ 80015f0:	693b      	ldr	r3, [r7, #16]
+ 80015f2:	f503 6380 	add.w	r3, r3, #1024	; 0x400
+ 80015f6:	461a      	mov	r2, r3
+ 80015f8:	f64e 2360 	movw	r3, #60000	; 0xea60
+ 80015fc:	6053      	str	r3, [r2, #4]
+        }
+      }
+#if (USE_HAL_HCD_REGISTER_CALLBACKS == 1U)
+      hhcd->PortEnabledCallback(hhcd);
+#else
+      HAL_HCD_PortEnabled_Callback(hhcd);
+ 80015fe:	6878      	ldr	r0, [r7, #4]
+ 8001600:	f000 fbc7 	bl	8001d92 <HAL_HCD_PortEnabled_Callback>
+ 8001604:	e002      	b.n	800160c <HCD_Port_IRQHandler+0xc0>
+    else
+    {
+#if (USE_HAL_HCD_REGISTER_CALLBACKS == 1U)
+      hhcd->PortDisabledCallback(hhcd);
+#else
+      HAL_HCD_PortDisabled_Callback(hhcd);
+ 8001606:	6878      	ldr	r0, [r7, #4]
+ 8001608:	f000 fbd1 	bl	8001dae <HAL_HCD_PortDisabled_Callback>
+#endif /* USE_HAL_HCD_REGISTER_CALLBACKS */
+    }
+  }
+
+  /* Check for an overcurrent */
+  if ((hprt0 & USB_OTG_HPRT_POCCHNG) == USB_OTG_HPRT_POCCHNG)
+ 800160c:	68fb      	ldr	r3, [r7, #12]
+ 800160e:	f003 0320 	and.w	r3, r3, #32
+ 8001612:	2b20      	cmp	r3, #32
+ 8001614:	d103      	bne.n	800161e <HCD_Port_IRQHandler+0xd2>
+  {
+    hprt0_dup |= USB_OTG_HPRT_POCCHNG;
+ 8001616:	68bb      	ldr	r3, [r7, #8]
+ 8001618:	f043 0320 	orr.w	r3, r3, #32
+ 800161c:	60bb      	str	r3, [r7, #8]
+  }
+
+  /* Clear Port Interrupts */
+  USBx_HPRT0 = hprt0_dup;
+ 800161e:	693b      	ldr	r3, [r7, #16]
+ 8001620:	f503 6388 	add.w	r3, r3, #1088	; 0x440
+ 8001624:	461a      	mov	r2, r3
+ 8001626:	68bb      	ldr	r3, [r7, #8]
+ 8001628:	6013      	str	r3, [r2, #0]
+}
+ 800162a:	bf00      	nop
+ 800162c:	3718      	adds	r7, #24
+ 800162e:	46bd      	mov	sp, r7
+ 8001630:	bd80      	pop	{r7, pc}
+
+08001632 <USB_EnableGlobalInt>:
+  *         Enables the controller's Global Int in the AHB Config reg
+  * @param  USBx  Selected device
+  * @retval HAL status
+  */
+HAL_StatusTypeDef USB_EnableGlobalInt(USB_OTG_GlobalTypeDef *USBx)
+{
+ 8001632:	b480      	push	{r7}
+ 8001634:	b083      	sub	sp, #12
+ 8001636:	af00      	add	r7, sp, #0
+ 8001638:	6078      	str	r0, [r7, #4]
+  USBx->GAHBCFG |= USB_OTG_GAHBCFG_GINT;
+ 800163a:	687b      	ldr	r3, [r7, #4]
+ 800163c:	689b      	ldr	r3, [r3, #8]
+ 800163e:	f043 0201 	orr.w	r2, r3, #1
+ 8001642:	687b      	ldr	r3, [r7, #4]
+ 8001644:	609a      	str	r2, [r3, #8]
+  return HAL_OK;
+ 8001646:	2300      	movs	r3, #0
+}
+ 8001648:	4618      	mov	r0, r3
+ 800164a:	370c      	adds	r7, #12
+ 800164c:	46bd      	mov	sp, r7
+ 800164e:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001652:	4770      	bx	lr
+
+08001654 <USB_DisableGlobalInt>:
+  *         Disable the controller's Global Int in the AHB Config reg
+  * @param  USBx  Selected device
+  * @retval HAL status
+  */
+HAL_StatusTypeDef USB_DisableGlobalInt(USB_OTG_GlobalTypeDef *USBx)
+{
+ 8001654:	b480      	push	{r7}
+ 8001656:	b083      	sub	sp, #12
+ 8001658:	af00      	add	r7, sp, #0
+ 800165a:	6078      	str	r0, [r7, #4]
+  USBx->GAHBCFG &= ~USB_OTG_GAHBCFG_GINT;
+ 800165c:	687b      	ldr	r3, [r7, #4]
+ 800165e:	689b      	ldr	r3, [r3, #8]
+ 8001660:	f023 0201 	bic.w	r2, r3, #1
+ 8001664:	687b      	ldr	r3, [r7, #4]
+ 8001666:	609a      	str	r2, [r3, #8]
+  return HAL_OK;
+ 8001668:	2300      	movs	r3, #0
+}
+ 800166a:	4618      	mov	r0, r3
+ 800166c:	370c      	adds	r7, #12
+ 800166e:	46bd      	mov	sp, r7
+ 8001670:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001674:	4770      	bx	lr
+	...
+
+08001678 <USB_FlushTxFifo>:
+  *         This parameter can be a value from 1 to 15
+            15 means Flush all Tx FIFOs
+  * @retval HAL status
+  */
+HAL_StatusTypeDef USB_FlushTxFifo(USB_OTG_GlobalTypeDef *USBx, uint32_t num)
+{
+ 8001678:	b480      	push	{r7}
+ 800167a:	b085      	sub	sp, #20
+ 800167c:	af00      	add	r7, sp, #0
+ 800167e:	6078      	str	r0, [r7, #4]
+ 8001680:	6039      	str	r1, [r7, #0]
+  __IO uint32_t count = 0U;
+ 8001682:	2300      	movs	r3, #0
+ 8001684:	60fb      	str	r3, [r7, #12]
+
+  /* Wait for AHB master IDLE state. */
+  do
+  {
+    count++;
+ 8001686:	68fb      	ldr	r3, [r7, #12]
+ 8001688:	3301      	adds	r3, #1
+ 800168a:	60fb      	str	r3, [r7, #12]
+
+    if (count > 200000U)
+ 800168c:	68fb      	ldr	r3, [r7, #12]
+ 800168e:	4a13      	ldr	r2, [pc, #76]	; (80016dc <USB_FlushTxFifo+0x64>)
+ 8001690:	4293      	cmp	r3, r2
+ 8001692:	d901      	bls.n	8001698 <USB_FlushTxFifo+0x20>
+    {
+      return HAL_TIMEOUT;
+ 8001694:	2303      	movs	r3, #3
+ 8001696:	e01b      	b.n	80016d0 <USB_FlushTxFifo+0x58>
+    }
+  } while ((USBx->GRSTCTL & USB_OTG_GRSTCTL_AHBIDL) == 0U);
+ 8001698:	687b      	ldr	r3, [r7, #4]
+ 800169a:	691b      	ldr	r3, [r3, #16]
+ 800169c:	2b00      	cmp	r3, #0
+ 800169e:	daf2      	bge.n	8001686 <USB_FlushTxFifo+0xe>
+
+  /* Flush TX Fifo */
+  count = 0U;
+ 80016a0:	2300      	movs	r3, #0
+ 80016a2:	60fb      	str	r3, [r7, #12]
+  USBx->GRSTCTL = (USB_OTG_GRSTCTL_TXFFLSH | (num << 6));
+ 80016a4:	683b      	ldr	r3, [r7, #0]
+ 80016a6:	019b      	lsls	r3, r3, #6
+ 80016a8:	f043 0220 	orr.w	r2, r3, #32
+ 80016ac:	687b      	ldr	r3, [r7, #4]
+ 80016ae:	611a      	str	r2, [r3, #16]
+
+  do
+  {
+    count++;
+ 80016b0:	68fb      	ldr	r3, [r7, #12]
+ 80016b2:	3301      	adds	r3, #1
+ 80016b4:	60fb      	str	r3, [r7, #12]
+
+    if (count > 200000U)
+ 80016b6:	68fb      	ldr	r3, [r7, #12]
+ 80016b8:	4a08      	ldr	r2, [pc, #32]	; (80016dc <USB_FlushTxFifo+0x64>)
+ 80016ba:	4293      	cmp	r3, r2
+ 80016bc:	d901      	bls.n	80016c2 <USB_FlushTxFifo+0x4a>
+    {
+      return HAL_TIMEOUT;
+ 80016be:	2303      	movs	r3, #3
+ 80016c0:	e006      	b.n	80016d0 <USB_FlushTxFifo+0x58>
+    }
+  } while ((USBx->GRSTCTL & USB_OTG_GRSTCTL_TXFFLSH) == USB_OTG_GRSTCTL_TXFFLSH);
+ 80016c2:	687b      	ldr	r3, [r7, #4]
+ 80016c4:	691b      	ldr	r3, [r3, #16]
+ 80016c6:	f003 0320 	and.w	r3, r3, #32
+ 80016ca:	2b20      	cmp	r3, #32
+ 80016cc:	d0f0      	beq.n	80016b0 <USB_FlushTxFifo+0x38>
+
+  return HAL_OK;
+ 80016ce:	2300      	movs	r3, #0
+}
+ 80016d0:	4618      	mov	r0, r3
+ 80016d2:	3714      	adds	r7, #20
+ 80016d4:	46bd      	mov	sp, r7
+ 80016d6:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80016da:	4770      	bx	lr
+ 80016dc:	00030d40 	.word	0x00030d40
+
+080016e0 <USB_FlushRxFifo>:
+  * @brief  USB_FlushRxFifo  Flush Rx FIFO
+  * @param  USBx  Selected device
+  * @retval HAL status
+  */
+HAL_StatusTypeDef USB_FlushRxFifo(USB_OTG_GlobalTypeDef *USBx)
+{
+ 80016e0:	b480      	push	{r7}
+ 80016e2:	b085      	sub	sp, #20
+ 80016e4:	af00      	add	r7, sp, #0
+ 80016e6:	6078      	str	r0, [r7, #4]
+  __IO uint32_t count = 0U;
+ 80016e8:	2300      	movs	r3, #0
+ 80016ea:	60fb      	str	r3, [r7, #12]
+
+  /* Wait for AHB master IDLE state. */
+  do
+  {
+    count++;
+ 80016ec:	68fb      	ldr	r3, [r7, #12]
+ 80016ee:	3301      	adds	r3, #1
+ 80016f0:	60fb      	str	r3, [r7, #12]
+
+    if (count > 200000U)
+ 80016f2:	68fb      	ldr	r3, [r7, #12]
+ 80016f4:	4a11      	ldr	r2, [pc, #68]	; (800173c <USB_FlushRxFifo+0x5c>)
+ 80016f6:	4293      	cmp	r3, r2
+ 80016f8:	d901      	bls.n	80016fe <USB_FlushRxFifo+0x1e>
+    {
+      return HAL_TIMEOUT;
+ 80016fa:	2303      	movs	r3, #3
+ 80016fc:	e018      	b.n	8001730 <USB_FlushRxFifo+0x50>
+    }
+  } while ((USBx->GRSTCTL & USB_OTG_GRSTCTL_AHBIDL) == 0U);
+ 80016fe:	687b      	ldr	r3, [r7, #4]
+ 8001700:	691b      	ldr	r3, [r3, #16]
+ 8001702:	2b00      	cmp	r3, #0
+ 8001704:	daf2      	bge.n	80016ec <USB_FlushRxFifo+0xc>
+
+  /* Flush RX Fifo */
+  count = 0U;
+ 8001706:	2300      	movs	r3, #0
+ 8001708:	60fb      	str	r3, [r7, #12]
+  USBx->GRSTCTL = USB_OTG_GRSTCTL_RXFFLSH;
+ 800170a:	687b      	ldr	r3, [r7, #4]
+ 800170c:	2210      	movs	r2, #16
+ 800170e:	611a      	str	r2, [r3, #16]
+
+  do
+  {
+    count++;
+ 8001710:	68fb      	ldr	r3, [r7, #12]
+ 8001712:	3301      	adds	r3, #1
+ 8001714:	60fb      	str	r3, [r7, #12]
+
+    if (count > 200000U)
+ 8001716:	68fb      	ldr	r3, [r7, #12]
+ 8001718:	4a08      	ldr	r2, [pc, #32]	; (800173c <USB_FlushRxFifo+0x5c>)
+ 800171a:	4293      	cmp	r3, r2
+ 800171c:	d901      	bls.n	8001722 <USB_FlushRxFifo+0x42>
+    {
+      return HAL_TIMEOUT;
+ 800171e:	2303      	movs	r3, #3
+ 8001720:	e006      	b.n	8001730 <USB_FlushRxFifo+0x50>
+    }
+  } while ((USBx->GRSTCTL & USB_OTG_GRSTCTL_RXFFLSH) == USB_OTG_GRSTCTL_RXFFLSH);
+ 8001722:	687b      	ldr	r3, [r7, #4]
+ 8001724:	691b      	ldr	r3, [r3, #16]
+ 8001726:	f003 0310 	and.w	r3, r3, #16
+ 800172a:	2b10      	cmp	r3, #16
+ 800172c:	d0f0      	beq.n	8001710 <USB_FlushRxFifo+0x30>
+
+  return HAL_OK;
+ 800172e:	2300      	movs	r3, #0
+}
+ 8001730:	4618      	mov	r0, r3
+ 8001732:	3714      	adds	r7, #20
+ 8001734:	46bd      	mov	sp, r7
+ 8001736:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 800173a:	4770      	bx	lr
+ 800173c:	00030d40 	.word	0x00030d40
+
+08001740 <USB_ReadPacket>:
+  * @param  dest  source pointer
+  * @param  len  Number of bytes to read
+  * @retval pointer to destination buffer
+  */
+void *USB_ReadPacket(USB_OTG_GlobalTypeDef *USBx, uint8_t *dest, uint16_t len)
+{
+ 8001740:	b480      	push	{r7}
+ 8001742:	b08b      	sub	sp, #44	; 0x2c
+ 8001744:	af00      	add	r7, sp, #0
+ 8001746:	60f8      	str	r0, [r7, #12]
+ 8001748:	60b9      	str	r1, [r7, #8]
+ 800174a:	4613      	mov	r3, r2
+ 800174c:	80fb      	strh	r3, [r7, #6]
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 800174e:	68fb      	ldr	r3, [r7, #12]
+ 8001750:	61bb      	str	r3, [r7, #24]
+  uint8_t *pDest = dest;
+ 8001752:	68bb      	ldr	r3, [r7, #8]
+ 8001754:	627b      	str	r3, [r7, #36]	; 0x24
+  uint32_t pData;
+  uint32_t i;
+  uint32_t count32b = (uint32_t)len >> 2U;
+ 8001756:	88fb      	ldrh	r3, [r7, #6]
+ 8001758:	089b      	lsrs	r3, r3, #2
+ 800175a:	b29b      	uxth	r3, r3
+ 800175c:	617b      	str	r3, [r7, #20]
+  uint16_t remaining_bytes = len % 4U;
+ 800175e:	88fb      	ldrh	r3, [r7, #6]
+ 8001760:	f003 0303 	and.w	r3, r3, #3
+ 8001764:	83fb      	strh	r3, [r7, #30]
+
+  for (i = 0U; i < count32b; i++)
+ 8001766:	2300      	movs	r3, #0
+ 8001768:	623b      	str	r3, [r7, #32]
+ 800176a:	e014      	b.n	8001796 <USB_ReadPacket+0x56>
+  {
+    __UNALIGNED_UINT32_WRITE(pDest, USBx_DFIFO(0U));
+ 800176c:	69bb      	ldr	r3, [r7, #24]
+ 800176e:	f503 5380 	add.w	r3, r3, #4096	; 0x1000
+ 8001772:	681a      	ldr	r2, [r3, #0]
+ 8001774:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 8001776:	601a      	str	r2, [r3, #0]
+    pDest++;
+ 8001778:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 800177a:	3301      	adds	r3, #1
+ 800177c:	627b      	str	r3, [r7, #36]	; 0x24
+    pDest++;
+ 800177e:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 8001780:	3301      	adds	r3, #1
+ 8001782:	627b      	str	r3, [r7, #36]	; 0x24
+    pDest++;
+ 8001784:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 8001786:	3301      	adds	r3, #1
+ 8001788:	627b      	str	r3, [r7, #36]	; 0x24
+    pDest++;
+ 800178a:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 800178c:	3301      	adds	r3, #1
+ 800178e:	627b      	str	r3, [r7, #36]	; 0x24
+  for (i = 0U; i < count32b; i++)
+ 8001790:	6a3b      	ldr	r3, [r7, #32]
+ 8001792:	3301      	adds	r3, #1
+ 8001794:	623b      	str	r3, [r7, #32]
+ 8001796:	6a3a      	ldr	r2, [r7, #32]
+ 8001798:	697b      	ldr	r3, [r7, #20]
+ 800179a:	429a      	cmp	r2, r3
+ 800179c:	d3e6      	bcc.n	800176c <USB_ReadPacket+0x2c>
+  }
+
+  /* When Number of data is not word aligned, read the remaining byte */
+  if (remaining_bytes != 0U)
+ 800179e:	8bfb      	ldrh	r3, [r7, #30]
+ 80017a0:	2b00      	cmp	r3, #0
+ 80017a2:	d01e      	beq.n	80017e2 <USB_ReadPacket+0xa2>
+  {
+    i = 0U;
+ 80017a4:	2300      	movs	r3, #0
+ 80017a6:	623b      	str	r3, [r7, #32]
+    __UNALIGNED_UINT32_WRITE(&pData, USBx_DFIFO(0U));
+ 80017a8:	69bb      	ldr	r3, [r7, #24]
+ 80017aa:	f503 5380 	add.w	r3, r3, #4096	; 0x1000
+ 80017ae:	461a      	mov	r2, r3
+ 80017b0:	f107 0310 	add.w	r3, r7, #16
+ 80017b4:	6812      	ldr	r2, [r2, #0]
+ 80017b6:	601a      	str	r2, [r3, #0]
+
+    do
+    {
+      *(uint8_t *)pDest = (uint8_t)(pData >> (8U * (uint8_t)(i)));
+ 80017b8:	693a      	ldr	r2, [r7, #16]
+ 80017ba:	6a3b      	ldr	r3, [r7, #32]
+ 80017bc:	b2db      	uxtb	r3, r3
+ 80017be:	00db      	lsls	r3, r3, #3
+ 80017c0:	fa22 f303 	lsr.w	r3, r2, r3
+ 80017c4:	b2da      	uxtb	r2, r3
+ 80017c6:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 80017c8:	701a      	strb	r2, [r3, #0]
+      i++;
+ 80017ca:	6a3b      	ldr	r3, [r7, #32]
+ 80017cc:	3301      	adds	r3, #1
+ 80017ce:	623b      	str	r3, [r7, #32]
+      pDest++;
+ 80017d0:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 80017d2:	3301      	adds	r3, #1
+ 80017d4:	627b      	str	r3, [r7, #36]	; 0x24
+      remaining_bytes--;
+ 80017d6:	8bfb      	ldrh	r3, [r7, #30]
+ 80017d8:	3b01      	subs	r3, #1
+ 80017da:	83fb      	strh	r3, [r7, #30]
+    } while (remaining_bytes != 0U);
+ 80017dc:	8bfb      	ldrh	r3, [r7, #30]
+ 80017de:	2b00      	cmp	r3, #0
+ 80017e0:	d1ea      	bne.n	80017b8 <USB_ReadPacket+0x78>
+  }
+
+  return ((void *)pDest);
+ 80017e2:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+}
+ 80017e4:	4618      	mov	r0, r3
+ 80017e6:	372c      	adds	r7, #44	; 0x2c
+ 80017e8:	46bd      	mov	sp, r7
+ 80017ea:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80017ee:	4770      	bx	lr
+
+080017f0 <USB_ReadInterrupts>:
+  * @brief  USB_ReadInterrupts: return the global USB interrupt status
+  * @param  USBx  Selected device
+  * @retval HAL status
+  */
+uint32_t  USB_ReadInterrupts(USB_OTG_GlobalTypeDef *USBx)
+{
+ 80017f0:	b480      	push	{r7}
+ 80017f2:	b085      	sub	sp, #20
+ 80017f4:	af00      	add	r7, sp, #0
+ 80017f6:	6078      	str	r0, [r7, #4]
+  uint32_t tmpreg;
+
+  tmpreg = USBx->GINTSTS;
+ 80017f8:	687b      	ldr	r3, [r7, #4]
+ 80017fa:	695b      	ldr	r3, [r3, #20]
+ 80017fc:	60fb      	str	r3, [r7, #12]
+  tmpreg &= USBx->GINTMSK;
+ 80017fe:	687b      	ldr	r3, [r7, #4]
+ 8001800:	699b      	ldr	r3, [r3, #24]
+ 8001802:	68fa      	ldr	r2, [r7, #12]
+ 8001804:	4013      	ands	r3, r2
+ 8001806:	60fb      	str	r3, [r7, #12]
+
+  return tmpreg;
+ 8001808:	68fb      	ldr	r3, [r7, #12]
+}
+ 800180a:	4618      	mov	r0, r3
+ 800180c:	3714      	adds	r7, #20
+ 800180e:	46bd      	mov	sp, r7
+ 8001810:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001814:	4770      	bx	lr
+
+08001816 <USB_GetMode>:
+  *          This parameter can be one of these values:
+  *           0 : Host
+  *           1 : Device
+  */
+uint32_t USB_GetMode(USB_OTG_GlobalTypeDef *USBx)
+{
+ 8001816:	b480      	push	{r7}
+ 8001818:	b083      	sub	sp, #12
+ 800181a:	af00      	add	r7, sp, #0
+ 800181c:	6078      	str	r0, [r7, #4]
+  return ((USBx->GINTSTS) & 0x1U);
+ 800181e:	687b      	ldr	r3, [r7, #4]
+ 8001820:	695b      	ldr	r3, [r3, #20]
+ 8001822:	f003 0301 	and.w	r3, r3, #1
+}
+ 8001826:	4618      	mov	r0, r3
+ 8001828:	370c      	adds	r7, #12
+ 800182a:	46bd      	mov	sp, r7
+ 800182c:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001830:	4770      	bx	lr
+
+08001832 <USB_InitFSLSPClkSel>:
+  *           HCFG_48_MHZ : Full Speed 48 MHz Clock
+  *           HCFG_6_MHZ : Low Speed 6 MHz Clock
+  * @retval HAL status
+  */
+HAL_StatusTypeDef USB_InitFSLSPClkSel(USB_OTG_GlobalTypeDef *USBx, uint8_t freq)
+{
+ 8001832:	b480      	push	{r7}
+ 8001834:	b085      	sub	sp, #20
+ 8001836:	af00      	add	r7, sp, #0
+ 8001838:	6078      	str	r0, [r7, #4]
+ 800183a:	460b      	mov	r3, r1
+ 800183c:	70fb      	strb	r3, [r7, #3]
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 800183e:	687b      	ldr	r3, [r7, #4]
+ 8001840:	60fb      	str	r3, [r7, #12]
+
+  USBx_HOST->HCFG &= ~(USB_OTG_HCFG_FSLSPCS);
+ 8001842:	68fb      	ldr	r3, [r7, #12]
+ 8001844:	f503 6380 	add.w	r3, r3, #1024	; 0x400
+ 8001848:	681b      	ldr	r3, [r3, #0]
+ 800184a:	68fa      	ldr	r2, [r7, #12]
+ 800184c:	f502 6280 	add.w	r2, r2, #1024	; 0x400
+ 8001850:	f023 0303 	bic.w	r3, r3, #3
+ 8001854:	6013      	str	r3, [r2, #0]
+  USBx_HOST->HCFG |= (uint32_t)freq & USB_OTG_HCFG_FSLSPCS;
+ 8001856:	68fb      	ldr	r3, [r7, #12]
+ 8001858:	f503 6380 	add.w	r3, r3, #1024	; 0x400
+ 800185c:	681a      	ldr	r2, [r3, #0]
+ 800185e:	78fb      	ldrb	r3, [r7, #3]
+ 8001860:	f003 0303 	and.w	r3, r3, #3
+ 8001864:	68f9      	ldr	r1, [r7, #12]
+ 8001866:	f501 6180 	add.w	r1, r1, #1024	; 0x400
+ 800186a:	4313      	orrs	r3, r2
+ 800186c:	600b      	str	r3, [r1, #0]
+
+  if (freq == HCFG_48_MHZ)
+ 800186e:	78fb      	ldrb	r3, [r7, #3]
+ 8001870:	2b01      	cmp	r3, #1
+ 8001872:	d107      	bne.n	8001884 <USB_InitFSLSPClkSel+0x52>
+  {
+    USBx_HOST->HFIR = 48000U;
+ 8001874:	68fb      	ldr	r3, [r7, #12]
+ 8001876:	f503 6380 	add.w	r3, r3, #1024	; 0x400
+ 800187a:	461a      	mov	r2, r3
+ 800187c:	f64b 3380 	movw	r3, #48000	; 0xbb80
+ 8001880:	6053      	str	r3, [r2, #4]
+ 8001882:	e009      	b.n	8001898 <USB_InitFSLSPClkSel+0x66>
+  }
+  else if (freq == HCFG_6_MHZ)
+ 8001884:	78fb      	ldrb	r3, [r7, #3]
+ 8001886:	2b02      	cmp	r3, #2
+ 8001888:	d106      	bne.n	8001898 <USB_InitFSLSPClkSel+0x66>
+  {
+    USBx_HOST->HFIR = 6000U;
+ 800188a:	68fb      	ldr	r3, [r7, #12]
+ 800188c:	f503 6380 	add.w	r3, r3, #1024	; 0x400
+ 8001890:	461a      	mov	r2, r3
+ 8001892:	f241 7370 	movw	r3, #6000	; 0x1770
+ 8001896:	6053      	str	r3, [r2, #4]
+  else
+  {
+    /* ... */
+  }
+
+  return HAL_OK;
+ 8001898:	2300      	movs	r3, #0
+}
+ 800189a:	4618      	mov	r0, r3
+ 800189c:	3714      	adds	r7, #20
+ 800189e:	46bd      	mov	sp, r7
+ 80018a0:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80018a4:	4770      	bx	lr
+
+080018a6 <USB_HC_ReadInterrupt>:
+  * @brief Read all host channel interrupts status
+  * @param  USBx  Selected device
+  * @retval HAL state
+  */
+uint32_t USB_HC_ReadInterrupt(USB_OTG_GlobalTypeDef *USBx)
+{
+ 80018a6:	b480      	push	{r7}
+ 80018a8:	b085      	sub	sp, #20
+ 80018aa:	af00      	add	r7, sp, #0
+ 80018ac:	6078      	str	r0, [r7, #4]
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 80018ae:	687b      	ldr	r3, [r7, #4]
+ 80018b0:	60fb      	str	r3, [r7, #12]
+
+  return ((USBx_HOST->HAINT) & 0xFFFFU);
+ 80018b2:	68fb      	ldr	r3, [r7, #12]
+ 80018b4:	f503 6380 	add.w	r3, r3, #1024	; 0x400
+ 80018b8:	695b      	ldr	r3, [r3, #20]
+ 80018ba:	b29b      	uxth	r3, r3
+}
+ 80018bc:	4618      	mov	r0, r3
+ 80018be:	3714      	adds	r7, #20
+ 80018c0:	46bd      	mov	sp, r7
+ 80018c2:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80018c6:	4770      	bx	lr
+
+080018c8 <USB_HC_Halt>:
+  * @param  hc_num  Host Channel number
+  *         This parameter can be a value from 1 to 15
+  * @retval HAL state
+  */
+HAL_StatusTypeDef USB_HC_Halt(USB_OTG_GlobalTypeDef *USBx, uint8_t hc_num)
+{
+ 80018c8:	b480      	push	{r7}
+ 80018ca:	b089      	sub	sp, #36	; 0x24
+ 80018cc:	af00      	add	r7, sp, #0
+ 80018ce:	6078      	str	r0, [r7, #4]
+ 80018d0:	460b      	mov	r3, r1
+ 80018d2:	70fb      	strb	r3, [r7, #3]
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 80018d4:	687b      	ldr	r3, [r7, #4]
+ 80018d6:	61fb      	str	r3, [r7, #28]
+  uint32_t hcnum = (uint32_t)hc_num;
+ 80018d8:	78fb      	ldrb	r3, [r7, #3]
+ 80018da:	61bb      	str	r3, [r7, #24]
+  __IO uint32_t count = 0U;
+ 80018dc:	2300      	movs	r3, #0
+ 80018de:	60fb      	str	r3, [r7, #12]
+  uint32_t HcEpType = (USBx_HC(hcnum)->HCCHAR & USB_OTG_HCCHAR_EPTYP) >> 18;
+ 80018e0:	69bb      	ldr	r3, [r7, #24]
+ 80018e2:	015a      	lsls	r2, r3, #5
+ 80018e4:	69fb      	ldr	r3, [r7, #28]
+ 80018e6:	4413      	add	r3, r2
+ 80018e8:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80018ec:	681b      	ldr	r3, [r3, #0]
+ 80018ee:	0c9b      	lsrs	r3, r3, #18
+ 80018f0:	f003 0303 	and.w	r3, r3, #3
+ 80018f4:	617b      	str	r3, [r7, #20]
+  uint32_t ChannelEna = (USBx_HC(hcnum)->HCCHAR & USB_OTG_HCCHAR_CHENA) >> 31;
+ 80018f6:	69bb      	ldr	r3, [r7, #24]
+ 80018f8:	015a      	lsls	r2, r3, #5
+ 80018fa:	69fb      	ldr	r3, [r7, #28]
+ 80018fc:	4413      	add	r3, r2
+ 80018fe:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001902:	681b      	ldr	r3, [r3, #0]
+ 8001904:	0fdb      	lsrs	r3, r3, #31
+ 8001906:	f003 0301 	and.w	r3, r3, #1
+ 800190a:	613b      	str	r3, [r7, #16]
+
+  if (((USBx->GAHBCFG & USB_OTG_GAHBCFG_DMAEN) == USB_OTG_GAHBCFG_DMAEN) &&
+ 800190c:	687b      	ldr	r3, [r7, #4]
+ 800190e:	689b      	ldr	r3, [r3, #8]
+ 8001910:	f003 0320 	and.w	r3, r3, #32
+ 8001914:	2b20      	cmp	r3, #32
+ 8001916:	d104      	bne.n	8001922 <USB_HC_Halt+0x5a>
+ 8001918:	693b      	ldr	r3, [r7, #16]
+ 800191a:	2b00      	cmp	r3, #0
+ 800191c:	d101      	bne.n	8001922 <USB_HC_Halt+0x5a>
+      (ChannelEna == 0U))
+  {
+    return HAL_OK;
+ 800191e:	2300      	movs	r3, #0
+ 8001920:	e0c8      	b.n	8001ab4 <USB_HC_Halt+0x1ec>
+  }
+
+  /* Check for space in the request queue to issue the halt. */
+  if ((HcEpType == HCCHAR_CTRL) || (HcEpType == HCCHAR_BULK))
+ 8001922:	697b      	ldr	r3, [r7, #20]
+ 8001924:	2b00      	cmp	r3, #0
+ 8001926:	d002      	beq.n	800192e <USB_HC_Halt+0x66>
+ 8001928:	697b      	ldr	r3, [r7, #20]
+ 800192a:	2b02      	cmp	r3, #2
+ 800192c:	d163      	bne.n	80019f6 <USB_HC_Halt+0x12e>
+  {
+    USBx_HC(hcnum)->HCCHAR |= USB_OTG_HCCHAR_CHDIS;
+ 800192e:	69bb      	ldr	r3, [r7, #24]
+ 8001930:	015a      	lsls	r2, r3, #5
+ 8001932:	69fb      	ldr	r3, [r7, #28]
+ 8001934:	4413      	add	r3, r2
+ 8001936:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 800193a:	681b      	ldr	r3, [r3, #0]
+ 800193c:	69ba      	ldr	r2, [r7, #24]
+ 800193e:	0151      	lsls	r1, r2, #5
+ 8001940:	69fa      	ldr	r2, [r7, #28]
+ 8001942:	440a      	add	r2, r1
+ 8001944:	f502 62a0 	add.w	r2, r2, #1280	; 0x500
+ 8001948:	f043 4380 	orr.w	r3, r3, #1073741824	; 0x40000000
+ 800194c:	6013      	str	r3, [r2, #0]
+
+    if ((USBx->GAHBCFG & USB_OTG_GAHBCFG_DMAEN) == 0U)
+ 800194e:	687b      	ldr	r3, [r7, #4]
+ 8001950:	689b      	ldr	r3, [r3, #8]
+ 8001952:	f003 0320 	and.w	r3, r3, #32
+ 8001956:	2b00      	cmp	r3, #0
+ 8001958:	f040 80ab 	bne.w	8001ab2 <USB_HC_Halt+0x1ea>
+    {
+      if ((USBx->HNPTXSTS & (0xFFU << 16)) == 0U)
+ 800195c:	687b      	ldr	r3, [r7, #4]
+ 800195e:	6adb      	ldr	r3, [r3, #44]	; 0x2c
+ 8001960:	f403 037f 	and.w	r3, r3, #16711680	; 0xff0000
+ 8001964:	2b00      	cmp	r3, #0
+ 8001966:	d133      	bne.n	80019d0 <USB_HC_Halt+0x108>
+      {
+        USBx_HC(hcnum)->HCCHAR &= ~USB_OTG_HCCHAR_CHENA;
+ 8001968:	69bb      	ldr	r3, [r7, #24]
+ 800196a:	015a      	lsls	r2, r3, #5
+ 800196c:	69fb      	ldr	r3, [r7, #28]
+ 800196e:	4413      	add	r3, r2
+ 8001970:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001974:	681b      	ldr	r3, [r3, #0]
+ 8001976:	69ba      	ldr	r2, [r7, #24]
+ 8001978:	0151      	lsls	r1, r2, #5
+ 800197a:	69fa      	ldr	r2, [r7, #28]
+ 800197c:	440a      	add	r2, r1
+ 800197e:	f502 62a0 	add.w	r2, r2, #1280	; 0x500
+ 8001982:	f023 4300 	bic.w	r3, r3, #2147483648	; 0x80000000
+ 8001986:	6013      	str	r3, [r2, #0]
+        USBx_HC(hcnum)->HCCHAR |= USB_OTG_HCCHAR_CHENA;
+ 8001988:	69bb      	ldr	r3, [r7, #24]
+ 800198a:	015a      	lsls	r2, r3, #5
+ 800198c:	69fb      	ldr	r3, [r7, #28]
+ 800198e:	4413      	add	r3, r2
+ 8001990:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001994:	681b      	ldr	r3, [r3, #0]
+ 8001996:	69ba      	ldr	r2, [r7, #24]
+ 8001998:	0151      	lsls	r1, r2, #5
+ 800199a:	69fa      	ldr	r2, [r7, #28]
+ 800199c:	440a      	add	r2, r1
+ 800199e:	f502 62a0 	add.w	r2, r2, #1280	; 0x500
+ 80019a2:	f043 4300 	orr.w	r3, r3, #2147483648	; 0x80000000
+ 80019a6:	6013      	str	r3, [r2, #0]
+        do
+        {
+          count++;
+ 80019a8:	68fb      	ldr	r3, [r7, #12]
+ 80019aa:	3301      	adds	r3, #1
+ 80019ac:	60fb      	str	r3, [r7, #12]
+
+          if (count > 1000U)
+ 80019ae:	68fb      	ldr	r3, [r7, #12]
+ 80019b0:	f5b3 7f7a 	cmp.w	r3, #1000	; 0x3e8
+ 80019b4:	d81d      	bhi.n	80019f2 <USB_HC_Halt+0x12a>
+          {
+            break;
+          }
+        } while ((USBx_HC(hcnum)->HCCHAR & USB_OTG_HCCHAR_CHENA) == USB_OTG_HCCHAR_CHENA);
+ 80019b6:	69bb      	ldr	r3, [r7, #24]
+ 80019b8:	015a      	lsls	r2, r3, #5
+ 80019ba:	69fb      	ldr	r3, [r7, #28]
+ 80019bc:	4413      	add	r3, r2
+ 80019be:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80019c2:	681b      	ldr	r3, [r3, #0]
+ 80019c4:	f003 4300 	and.w	r3, r3, #2147483648	; 0x80000000
+ 80019c8:	f1b3 4f00 	cmp.w	r3, #2147483648	; 0x80000000
+ 80019cc:	d0ec      	beq.n	80019a8 <USB_HC_Halt+0xe0>
+    if ((USBx->GAHBCFG & USB_OTG_GAHBCFG_DMAEN) == 0U)
+ 80019ce:	e070      	b.n	8001ab2 <USB_HC_Halt+0x1ea>
+      }
+      else
+      {
+        USBx_HC(hcnum)->HCCHAR |= USB_OTG_HCCHAR_CHENA;
+ 80019d0:	69bb      	ldr	r3, [r7, #24]
+ 80019d2:	015a      	lsls	r2, r3, #5
+ 80019d4:	69fb      	ldr	r3, [r7, #28]
+ 80019d6:	4413      	add	r3, r2
+ 80019d8:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 80019dc:	681b      	ldr	r3, [r3, #0]
+ 80019de:	69ba      	ldr	r2, [r7, #24]
+ 80019e0:	0151      	lsls	r1, r2, #5
+ 80019e2:	69fa      	ldr	r2, [r7, #28]
+ 80019e4:	440a      	add	r2, r1
+ 80019e6:	f502 62a0 	add.w	r2, r2, #1280	; 0x500
+ 80019ea:	f043 4300 	orr.w	r3, r3, #2147483648	; 0x80000000
+ 80019ee:	6013      	str	r3, [r2, #0]
+    if ((USBx->GAHBCFG & USB_OTG_GAHBCFG_DMAEN) == 0U)
+ 80019f0:	e05f      	b.n	8001ab2 <USB_HC_Halt+0x1ea>
+            break;
+ 80019f2:	bf00      	nop
+    if ((USBx->GAHBCFG & USB_OTG_GAHBCFG_DMAEN) == 0U)
+ 80019f4:	e05d      	b.n	8001ab2 <USB_HC_Halt+0x1ea>
+      }
+    }
+  }
+  else
+  {
+    USBx_HC(hcnum)->HCCHAR |= USB_OTG_HCCHAR_CHDIS;
+ 80019f6:	69bb      	ldr	r3, [r7, #24]
+ 80019f8:	015a      	lsls	r2, r3, #5
+ 80019fa:	69fb      	ldr	r3, [r7, #28]
+ 80019fc:	4413      	add	r3, r2
+ 80019fe:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001a02:	681b      	ldr	r3, [r3, #0]
+ 8001a04:	69ba      	ldr	r2, [r7, #24]
+ 8001a06:	0151      	lsls	r1, r2, #5
+ 8001a08:	69fa      	ldr	r2, [r7, #28]
+ 8001a0a:	440a      	add	r2, r1
+ 8001a0c:	f502 62a0 	add.w	r2, r2, #1280	; 0x500
+ 8001a10:	f043 4380 	orr.w	r3, r3, #1073741824	; 0x40000000
+ 8001a14:	6013      	str	r3, [r2, #0]
+
+    if ((USBx_HOST->HPTXSTS & (0xFFU << 16)) == 0U)
+ 8001a16:	69fb      	ldr	r3, [r7, #28]
+ 8001a18:	f503 6380 	add.w	r3, r3, #1024	; 0x400
+ 8001a1c:	691b      	ldr	r3, [r3, #16]
+ 8001a1e:	f403 037f 	and.w	r3, r3, #16711680	; 0xff0000
+ 8001a22:	2b00      	cmp	r3, #0
+ 8001a24:	d133      	bne.n	8001a8e <USB_HC_Halt+0x1c6>
+    {
+      USBx_HC(hcnum)->HCCHAR &= ~USB_OTG_HCCHAR_CHENA;
+ 8001a26:	69bb      	ldr	r3, [r7, #24]
+ 8001a28:	015a      	lsls	r2, r3, #5
+ 8001a2a:	69fb      	ldr	r3, [r7, #28]
+ 8001a2c:	4413      	add	r3, r2
+ 8001a2e:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001a32:	681b      	ldr	r3, [r3, #0]
+ 8001a34:	69ba      	ldr	r2, [r7, #24]
+ 8001a36:	0151      	lsls	r1, r2, #5
+ 8001a38:	69fa      	ldr	r2, [r7, #28]
+ 8001a3a:	440a      	add	r2, r1
+ 8001a3c:	f502 62a0 	add.w	r2, r2, #1280	; 0x500
+ 8001a40:	f023 4300 	bic.w	r3, r3, #2147483648	; 0x80000000
+ 8001a44:	6013      	str	r3, [r2, #0]
+      USBx_HC(hcnum)->HCCHAR |= USB_OTG_HCCHAR_CHENA;
+ 8001a46:	69bb      	ldr	r3, [r7, #24]
+ 8001a48:	015a      	lsls	r2, r3, #5
+ 8001a4a:	69fb      	ldr	r3, [r7, #28]
+ 8001a4c:	4413      	add	r3, r2
+ 8001a4e:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001a52:	681b      	ldr	r3, [r3, #0]
+ 8001a54:	69ba      	ldr	r2, [r7, #24]
+ 8001a56:	0151      	lsls	r1, r2, #5
+ 8001a58:	69fa      	ldr	r2, [r7, #28]
+ 8001a5a:	440a      	add	r2, r1
+ 8001a5c:	f502 62a0 	add.w	r2, r2, #1280	; 0x500
+ 8001a60:	f043 4300 	orr.w	r3, r3, #2147483648	; 0x80000000
+ 8001a64:	6013      	str	r3, [r2, #0]
+      do
+      {
+        count++;
+ 8001a66:	68fb      	ldr	r3, [r7, #12]
+ 8001a68:	3301      	adds	r3, #1
+ 8001a6a:	60fb      	str	r3, [r7, #12]
+
+        if (count > 1000U)
+ 8001a6c:	68fb      	ldr	r3, [r7, #12]
+ 8001a6e:	f5b3 7f7a 	cmp.w	r3, #1000	; 0x3e8
+ 8001a72:	d81d      	bhi.n	8001ab0 <USB_HC_Halt+0x1e8>
+        {
+          break;
+        }
+      } while ((USBx_HC(hcnum)->HCCHAR & USB_OTG_HCCHAR_CHENA) == USB_OTG_HCCHAR_CHENA);
+ 8001a74:	69bb      	ldr	r3, [r7, #24]
+ 8001a76:	015a      	lsls	r2, r3, #5
+ 8001a78:	69fb      	ldr	r3, [r7, #28]
+ 8001a7a:	4413      	add	r3, r2
+ 8001a7c:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001a80:	681b      	ldr	r3, [r3, #0]
+ 8001a82:	f003 4300 	and.w	r3, r3, #2147483648	; 0x80000000
+ 8001a86:	f1b3 4f00 	cmp.w	r3, #2147483648	; 0x80000000
+ 8001a8a:	d0ec      	beq.n	8001a66 <USB_HC_Halt+0x19e>
+ 8001a8c:	e011      	b.n	8001ab2 <USB_HC_Halt+0x1ea>
+    }
+    else
+    {
+      USBx_HC(hcnum)->HCCHAR |= USB_OTG_HCCHAR_CHENA;
+ 8001a8e:	69bb      	ldr	r3, [r7, #24]
+ 8001a90:	015a      	lsls	r2, r3, #5
+ 8001a92:	69fb      	ldr	r3, [r7, #28]
+ 8001a94:	4413      	add	r3, r2
+ 8001a96:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001a9a:	681b      	ldr	r3, [r3, #0]
+ 8001a9c:	69ba      	ldr	r2, [r7, #24]
+ 8001a9e:	0151      	lsls	r1, r2, #5
+ 8001aa0:	69fa      	ldr	r2, [r7, #28]
+ 8001aa2:	440a      	add	r2, r1
+ 8001aa4:	f502 62a0 	add.w	r2, r2, #1280	; 0x500
+ 8001aa8:	f043 4300 	orr.w	r3, r3, #2147483648	; 0x80000000
+ 8001aac:	6013      	str	r3, [r2, #0]
+ 8001aae:	e000      	b.n	8001ab2 <USB_HC_Halt+0x1ea>
+          break;
+ 8001ab0:	bf00      	nop
+    }
+  }
+
+  return HAL_OK;
+ 8001ab2:	2300      	movs	r3, #0
+}
+ 8001ab4:	4618      	mov	r0, r3
+ 8001ab6:	3724      	adds	r7, #36	; 0x24
+ 8001ab8:	46bd      	mov	sp, r7
+ 8001aba:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001abe:	4770      	bx	lr
+
+08001ac0 <USB_StopHost>:
+  * @brief  Stop Host Core
+  * @param  USBx  Selected device
+  * @retval HAL state
+  */
+HAL_StatusTypeDef USB_StopHost(USB_OTG_GlobalTypeDef *USBx)
+{
+ 8001ac0:	b580      	push	{r7, lr}
+ 8001ac2:	b088      	sub	sp, #32
+ 8001ac4:	af00      	add	r7, sp, #0
+ 8001ac6:	6078      	str	r0, [r7, #4]
+  HAL_StatusTypeDef ret = HAL_OK;
+ 8001ac8:	2300      	movs	r3, #0
+ 8001aca:	77fb      	strb	r3, [r7, #31]
+  uint32_t USBx_BASE = (uint32_t)USBx;
+ 8001acc:	687b      	ldr	r3, [r7, #4]
+ 8001ace:	617b      	str	r3, [r7, #20]
+  __IO uint32_t count = 0U;
+ 8001ad0:	2300      	movs	r3, #0
+ 8001ad2:	60fb      	str	r3, [r7, #12]
+  uint32_t value;
+  uint32_t i;
+
+  (void)USB_DisableGlobalInt(USBx);
+ 8001ad4:	6878      	ldr	r0, [r7, #4]
+ 8001ad6:	f7ff fdbd 	bl	8001654 <USB_DisableGlobalInt>
+
+  /* Flush USB FIFO */
+  if (USB_FlushTxFifo(USBx, 0x10U) != HAL_OK) /* all Tx FIFOs */
+ 8001ada:	2110      	movs	r1, #16
+ 8001adc:	6878      	ldr	r0, [r7, #4]
+ 8001ade:	f7ff fdcb 	bl	8001678 <USB_FlushTxFifo>
+ 8001ae2:	4603      	mov	r3, r0
+ 8001ae4:	2b00      	cmp	r3, #0
+ 8001ae6:	d001      	beq.n	8001aec <USB_StopHost+0x2c>
+  {
+    ret = HAL_ERROR;
+ 8001ae8:	2301      	movs	r3, #1
+ 8001aea:	77fb      	strb	r3, [r7, #31]
+  }
+
+  if (USB_FlushRxFifo(USBx) != HAL_OK)
+ 8001aec:	6878      	ldr	r0, [r7, #4]
+ 8001aee:	f7ff fdf7 	bl	80016e0 <USB_FlushRxFifo>
+ 8001af2:	4603      	mov	r3, r0
+ 8001af4:	2b00      	cmp	r3, #0
+ 8001af6:	d001      	beq.n	8001afc <USB_StopHost+0x3c>
+  {
+    ret = HAL_ERROR;
+ 8001af8:	2301      	movs	r3, #1
+ 8001afa:	77fb      	strb	r3, [r7, #31]
+  }
+
+  /* Flush out any leftover queued requests. */
+  for (i = 0U; i <= 15U; i++)
+ 8001afc:	2300      	movs	r3, #0
+ 8001afe:	61bb      	str	r3, [r7, #24]
+ 8001b00:	e01f      	b.n	8001b42 <USB_StopHost+0x82>
+  {
+    value = USBx_HC(i)->HCCHAR;
+ 8001b02:	69bb      	ldr	r3, [r7, #24]
+ 8001b04:	015a      	lsls	r2, r3, #5
+ 8001b06:	697b      	ldr	r3, [r7, #20]
+ 8001b08:	4413      	add	r3, r2
+ 8001b0a:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001b0e:	681b      	ldr	r3, [r3, #0]
+ 8001b10:	613b      	str	r3, [r7, #16]
+    value |=  USB_OTG_HCCHAR_CHDIS;
+ 8001b12:	693b      	ldr	r3, [r7, #16]
+ 8001b14:	f043 4380 	orr.w	r3, r3, #1073741824	; 0x40000000
+ 8001b18:	613b      	str	r3, [r7, #16]
+    value &= ~USB_OTG_HCCHAR_CHENA;
+ 8001b1a:	693b      	ldr	r3, [r7, #16]
+ 8001b1c:	f023 4300 	bic.w	r3, r3, #2147483648	; 0x80000000
+ 8001b20:	613b      	str	r3, [r7, #16]
+    value &= ~USB_OTG_HCCHAR_EPDIR;
+ 8001b22:	693b      	ldr	r3, [r7, #16]
+ 8001b24:	f423 4300 	bic.w	r3, r3, #32768	; 0x8000
+ 8001b28:	613b      	str	r3, [r7, #16]
+    USBx_HC(i)->HCCHAR = value;
+ 8001b2a:	69bb      	ldr	r3, [r7, #24]
+ 8001b2c:	015a      	lsls	r2, r3, #5
+ 8001b2e:	697b      	ldr	r3, [r7, #20]
+ 8001b30:	4413      	add	r3, r2
+ 8001b32:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001b36:	461a      	mov	r2, r3
+ 8001b38:	693b      	ldr	r3, [r7, #16]
+ 8001b3a:	6013      	str	r3, [r2, #0]
+  for (i = 0U; i <= 15U; i++)
+ 8001b3c:	69bb      	ldr	r3, [r7, #24]
+ 8001b3e:	3301      	adds	r3, #1
+ 8001b40:	61bb      	str	r3, [r7, #24]
+ 8001b42:	69bb      	ldr	r3, [r7, #24]
+ 8001b44:	2b0f      	cmp	r3, #15
+ 8001b46:	d9dc      	bls.n	8001b02 <USB_StopHost+0x42>
+  }
+
+  /* Halt all channels to put them into a known state. */
+  for (i = 0U; i <= 15U; i++)
+ 8001b48:	2300      	movs	r3, #0
+ 8001b4a:	61bb      	str	r3, [r7, #24]
+ 8001b4c:	e034      	b.n	8001bb8 <USB_StopHost+0xf8>
+  {
+    value = USBx_HC(i)->HCCHAR;
+ 8001b4e:	69bb      	ldr	r3, [r7, #24]
+ 8001b50:	015a      	lsls	r2, r3, #5
+ 8001b52:	697b      	ldr	r3, [r7, #20]
+ 8001b54:	4413      	add	r3, r2
+ 8001b56:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001b5a:	681b      	ldr	r3, [r3, #0]
+ 8001b5c:	613b      	str	r3, [r7, #16]
+    value |= USB_OTG_HCCHAR_CHDIS;
+ 8001b5e:	693b      	ldr	r3, [r7, #16]
+ 8001b60:	f043 4380 	orr.w	r3, r3, #1073741824	; 0x40000000
+ 8001b64:	613b      	str	r3, [r7, #16]
+    value |= USB_OTG_HCCHAR_CHENA;
+ 8001b66:	693b      	ldr	r3, [r7, #16]
+ 8001b68:	f043 4300 	orr.w	r3, r3, #2147483648	; 0x80000000
+ 8001b6c:	613b      	str	r3, [r7, #16]
+    value &= ~USB_OTG_HCCHAR_EPDIR;
+ 8001b6e:	693b      	ldr	r3, [r7, #16]
+ 8001b70:	f423 4300 	bic.w	r3, r3, #32768	; 0x8000
+ 8001b74:	613b      	str	r3, [r7, #16]
+    USBx_HC(i)->HCCHAR = value;
+ 8001b76:	69bb      	ldr	r3, [r7, #24]
+ 8001b78:	015a      	lsls	r2, r3, #5
+ 8001b7a:	697b      	ldr	r3, [r7, #20]
+ 8001b7c:	4413      	add	r3, r2
+ 8001b7e:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001b82:	461a      	mov	r2, r3
+ 8001b84:	693b      	ldr	r3, [r7, #16]
+ 8001b86:	6013      	str	r3, [r2, #0]
+
+    do
+    {
+      count++;
+ 8001b88:	68fb      	ldr	r3, [r7, #12]
+ 8001b8a:	3301      	adds	r3, #1
+ 8001b8c:	60fb      	str	r3, [r7, #12]
+
+      if (count > 1000U)
+ 8001b8e:	68fb      	ldr	r3, [r7, #12]
+ 8001b90:	f5b3 7f7a 	cmp.w	r3, #1000	; 0x3e8
+ 8001b94:	d80c      	bhi.n	8001bb0 <USB_StopHost+0xf0>
+      {
+        break;
+      }
+    } while ((USBx_HC(i)->HCCHAR & USB_OTG_HCCHAR_CHENA) == USB_OTG_HCCHAR_CHENA);
+ 8001b96:	69bb      	ldr	r3, [r7, #24]
+ 8001b98:	015a      	lsls	r2, r3, #5
+ 8001b9a:	697b      	ldr	r3, [r7, #20]
+ 8001b9c:	4413      	add	r3, r2
+ 8001b9e:	f503 63a0 	add.w	r3, r3, #1280	; 0x500
+ 8001ba2:	681b      	ldr	r3, [r3, #0]
+ 8001ba4:	f003 4300 	and.w	r3, r3, #2147483648	; 0x80000000
+ 8001ba8:	f1b3 4f00 	cmp.w	r3, #2147483648	; 0x80000000
+ 8001bac:	d0ec      	beq.n	8001b88 <USB_StopHost+0xc8>
+ 8001bae:	e000      	b.n	8001bb2 <USB_StopHost+0xf2>
+        break;
+ 8001bb0:	bf00      	nop
+  for (i = 0U; i <= 15U; i++)
+ 8001bb2:	69bb      	ldr	r3, [r7, #24]
+ 8001bb4:	3301      	adds	r3, #1
+ 8001bb6:	61bb      	str	r3, [r7, #24]
+ 8001bb8:	69bb      	ldr	r3, [r7, #24]
+ 8001bba:	2b0f      	cmp	r3, #15
+ 8001bbc:	d9c7      	bls.n	8001b4e <USB_StopHost+0x8e>
+  }
+
+  /* Clear any pending Host interrupts */
+  USBx_HOST->HAINT = 0xFFFFFFFFU;
+ 8001bbe:	697b      	ldr	r3, [r7, #20]
+ 8001bc0:	f503 6380 	add.w	r3, r3, #1024	; 0x400
+ 8001bc4:	461a      	mov	r2, r3
+ 8001bc6:	f04f 33ff 	mov.w	r3, #4294967295
+ 8001bca:	6153      	str	r3, [r2, #20]
+  USBx->GINTSTS = 0xFFFFFFFFU;
+ 8001bcc:	687b      	ldr	r3, [r7, #4]
+ 8001bce:	f04f 32ff 	mov.w	r2, #4294967295
+ 8001bd2:	615a      	str	r2, [r3, #20]
+
+  (void)USB_EnableGlobalInt(USBx);
+ 8001bd4:	6878      	ldr	r0, [r7, #4]
+ 8001bd6:	f7ff fd2c 	bl	8001632 <USB_EnableGlobalInt>
+
+  return ret;
+ 8001bda:	7ffb      	ldrb	r3, [r7, #31]
+}
+ 8001bdc:	4618      	mov	r0, r3
+ 8001bde:	3720      	adds	r7, #32
+ 8001be0:	46bd      	mov	sp, r7
+ 8001be2:	bd80      	pop	{r7, pc}
+
+08001be4 <USBH_LL_IncTimer>:
+  *         Increment Host Timer tick
+  * @param  phost: Host Handle
+  * @retval None
+  */
+void  USBH_LL_IncTimer(USBH_HandleTypeDef *phost)
+{
+ 8001be4:	b580      	push	{r7, lr}
+ 8001be6:	b082      	sub	sp, #8
+ 8001be8:	af00      	add	r7, sp, #0
+ 8001bea:	6078      	str	r0, [r7, #4]
+  phost->Timer++;
+ 8001bec:	687b      	ldr	r3, [r7, #4]
+ 8001bee:	f8d3 33c4 	ldr.w	r3, [r3, #964]	; 0x3c4
+ 8001bf2:	1c5a      	adds	r2, r3, #1
+ 8001bf4:	687b      	ldr	r3, [r7, #4]
+ 8001bf6:	f8c3 23c4 	str.w	r2, [r3, #964]	; 0x3c4
+  USBH_HandleSof(phost);
+ 8001bfa:	6878      	ldr	r0, [r7, #4]
+ 8001bfc:	f000 f804 	bl	8001c08 <USBH_HandleSof>
+}
+ 8001c00:	bf00      	nop
+ 8001c02:	3708      	adds	r7, #8
+ 8001c04:	46bd      	mov	sp, r7
+ 8001c06:	bd80      	pop	{r7, pc}
+
+08001c08 <USBH_HandleSof>:
+  *         Call SOF process
+  * @param  phost: Host Handle
+  * @retval None
+  */
+static void  USBH_HandleSof(USBH_HandleTypeDef *phost)
+{
+ 8001c08:	b580      	push	{r7, lr}
+ 8001c0a:	b082      	sub	sp, #8
+ 8001c0c:	af00      	add	r7, sp, #0
+ 8001c0e:	6078      	str	r0, [r7, #4]
+  if ((phost->gState == HOST_CLASS) && (phost->pActiveClass != NULL))
+ 8001c10:	687b      	ldr	r3, [r7, #4]
+ 8001c12:	781b      	ldrb	r3, [r3, #0]
+ 8001c14:	b2db      	uxtb	r3, r3
+ 8001c16:	2b0b      	cmp	r3, #11
+ 8001c18:	d10a      	bne.n	8001c30 <USBH_HandleSof+0x28>
+ 8001c1a:	687b      	ldr	r3, [r7, #4]
+ 8001c1c:	f8d3 337c 	ldr.w	r3, [r3, #892]	; 0x37c
+ 8001c20:	2b00      	cmp	r3, #0
+ 8001c22:	d005      	beq.n	8001c30 <USBH_HandleSof+0x28>
+  {
+    phost->pActiveClass->SOFProcess(phost);
+ 8001c24:	687b      	ldr	r3, [r7, #4]
+ 8001c26:	f8d3 337c 	ldr.w	r3, [r3, #892]	; 0x37c
+ 8001c2a:	699b      	ldr	r3, [r3, #24]
+ 8001c2c:	6878      	ldr	r0, [r7, #4]
+ 8001c2e:	4798      	blx	r3
+  }
+}
+ 8001c30:	bf00      	nop
+ 8001c32:	3708      	adds	r7, #8
+ 8001c34:	46bd      	mov	sp, r7
+ 8001c36:	bd80      	pop	{r7, pc}
+
+08001c38 <USBH_LL_PortEnabled>:
+  *         Port Enabled
+  * @param  phost: Host Handle
+  * @retval None
+  */
+void USBH_LL_PortEnabled(USBH_HandleTypeDef *phost)
+{
+ 8001c38:	b480      	push	{r7}
+ 8001c3a:	b083      	sub	sp, #12
+ 8001c3c:	af00      	add	r7, sp, #0
+ 8001c3e:	6078      	str	r0, [r7, #4]
+  phost->device.PortEnabled = 1U;
+ 8001c40:	687b      	ldr	r3, [r7, #4]
+ 8001c42:	2201      	movs	r2, #1
+ 8001c44:	f883 2323 	strb.w	r2, [r3, #803]	; 0x323
+#else
+  (void)osMessageQueuePut(phost->os_event, &phost->os_msg, 0U, 0U);
+#endif
+#endif
+
+  return;
+ 8001c48:	bf00      	nop
+}
+ 8001c4a:	370c      	adds	r7, #12
+ 8001c4c:	46bd      	mov	sp, r7
+ 8001c4e:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001c52:	4770      	bx	lr
+
+08001c54 <USBH_LL_PortDisabled>:
+  *         Port Disabled
+  * @param  phost: Host Handle
+  * @retval None
+  */
+void USBH_LL_PortDisabled(USBH_HandleTypeDef *phost)
+{
+ 8001c54:	b480      	push	{r7}
+ 8001c56:	b083      	sub	sp, #12
+ 8001c58:	af00      	add	r7, sp, #0
+ 8001c5a:	6078      	str	r0, [r7, #4]
+  phost->device.PortEnabled = 0U;
+ 8001c5c:	687b      	ldr	r3, [r7, #4]
+ 8001c5e:	2200      	movs	r2, #0
+ 8001c60:	f883 2323 	strb.w	r2, [r3, #803]	; 0x323
+
+  return;
+ 8001c64:	bf00      	nop
+}
+ 8001c66:	370c      	adds	r7, #12
+ 8001c68:	46bd      	mov	sp, r7
+ 8001c6a:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001c6e:	4770      	bx	lr
+
+08001c70 <USBH_LL_Connect>:
+  *         Handle USB Host connexion event
+  * @param  phost: Host Handle
+  * @retval USBH_Status
+  */
+USBH_StatusTypeDef  USBH_LL_Connect(USBH_HandleTypeDef *phost)
+{
+ 8001c70:	b480      	push	{r7}
+ 8001c72:	b083      	sub	sp, #12
+ 8001c74:	af00      	add	r7, sp, #0
+ 8001c76:	6078      	str	r0, [r7, #4]
+  phost->device.is_connected = 1U;
+ 8001c78:	687b      	ldr	r3, [r7, #4]
+ 8001c7a:	2201      	movs	r2, #1
+ 8001c7c:	f883 2320 	strb.w	r2, [r3, #800]	; 0x320
+  phost->device.is_disconnected = 0U;
+ 8001c80:	687b      	ldr	r3, [r7, #4]
+ 8001c82:	2200      	movs	r2, #0
+ 8001c84:	f883 2321 	strb.w	r2, [r3, #801]	; 0x321
+  phost->device.is_ReEnumerated = 0U;
+ 8001c88:	687b      	ldr	r3, [r7, #4]
+ 8001c8a:	2200      	movs	r2, #0
+ 8001c8c:	f883 2322 	strb.w	r2, [r3, #802]	; 0x322
+#else
+  (void)osMessageQueuePut(phost->os_event, &phost->os_msg, 0U, 0U);
+#endif
+#endif
+
+  return USBH_OK;
+ 8001c90:	2300      	movs	r3, #0
+}
+ 8001c92:	4618      	mov	r0, r3
+ 8001c94:	370c      	adds	r7, #12
+ 8001c96:	46bd      	mov	sp, r7
+ 8001c98:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001c9c:	4770      	bx	lr
+
+08001c9e <USBH_LL_Disconnect>:
+  *         Handle USB Host disconnection event
+  * @param  phost: Host Handle
+  * @retval USBH_Status
+  */
+USBH_StatusTypeDef  USBH_LL_Disconnect(USBH_HandleTypeDef *phost)
+{
+ 8001c9e:	b580      	push	{r7, lr}
+ 8001ca0:	b082      	sub	sp, #8
+ 8001ca2:	af00      	add	r7, sp, #0
+ 8001ca4:	6078      	str	r0, [r7, #4]
+  /* update device connection states */
+  phost->device.is_disconnected = 1U;
+ 8001ca6:	687b      	ldr	r3, [r7, #4]
+ 8001ca8:	2201      	movs	r2, #1
+ 8001caa:	f883 2321 	strb.w	r2, [r3, #801]	; 0x321
+  phost->device.is_connected = 0U;
+ 8001cae:	687b      	ldr	r3, [r7, #4]
+ 8001cb0:	2200      	movs	r2, #0
+ 8001cb2:	f883 2320 	strb.w	r2, [r3, #800]	; 0x320
+  phost->device.PortEnabled = 0U;
+ 8001cb6:	687b      	ldr	r3, [r7, #4]
+ 8001cb8:	2200      	movs	r2, #0
+ 8001cba:	f883 2323 	strb.w	r2, [r3, #803]	; 0x323
+
+  /* Stop Host */
+  (void)USBH_LL_Stop(phost);
+ 8001cbe:	6878      	ldr	r0, [r7, #4]
+ 8001cc0:	f000 f883 	bl	8001dca <USBH_LL_Stop>
+
+  /* FRee Control Pipes */
+  (void)USBH_FreePipe(phost, phost->Control.pipe_in);
+ 8001cc4:	687b      	ldr	r3, [r7, #4]
+ 8001cc6:	791b      	ldrb	r3, [r3, #4]
+ 8001cc8:	4619      	mov	r1, r3
+ 8001cca:	6878      	ldr	r0, [r7, #4]
+ 8001ccc:	f000 f80b 	bl	8001ce6 <USBH_FreePipe>
+  (void)USBH_FreePipe(phost, phost->Control.pipe_out);
+ 8001cd0:	687b      	ldr	r3, [r7, #4]
+ 8001cd2:	795b      	ldrb	r3, [r3, #5]
+ 8001cd4:	4619      	mov	r1, r3
+ 8001cd6:	6878      	ldr	r0, [r7, #4]
+ 8001cd8:	f000 f805 	bl	8001ce6 <USBH_FreePipe>
+#else
+  (void)osMessageQueuePut(phost->os_event, &phost->os_msg, 0U, 0U);
+#endif
+#endif
+
+  return USBH_OK;
+ 8001cdc:	2300      	movs	r3, #0
+}
+ 8001cde:	4618      	mov	r0, r3
+ 8001ce0:	3708      	adds	r7, #8
+ 8001ce2:	46bd      	mov	sp, r7
+ 8001ce4:	bd80      	pop	{r7, pc}
+
+08001ce6 <USBH_FreePipe>:
+  * @param  phost: Host Handle
+  * @param  idx: Pipe number to be freed
+  * @retval USBH Status
+  */
+USBH_StatusTypeDef USBH_FreePipe(USBH_HandleTypeDef *phost, uint8_t idx)
+{
+ 8001ce6:	b480      	push	{r7}
+ 8001ce8:	b083      	sub	sp, #12
+ 8001cea:	af00      	add	r7, sp, #0
+ 8001cec:	6078      	str	r0, [r7, #4]
+ 8001cee:	460b      	mov	r3, r1
+ 8001cf0:	70fb      	strb	r3, [r7, #3]
+  if (idx < USBH_MAX_PIPES_NBR)
+ 8001cf2:	78fb      	ldrb	r3, [r7, #3]
+ 8001cf4:	2b0f      	cmp	r3, #15
+ 8001cf6:	d80d      	bhi.n	8001d14 <USBH_FreePipe+0x2e>
+  {
+    phost->Pipes[idx] &= 0x7FFFU;
+ 8001cf8:	78fb      	ldrb	r3, [r7, #3]
+ 8001cfa:	687a      	ldr	r2, [r7, #4]
+ 8001cfc:	33e0      	adds	r3, #224	; 0xe0
+ 8001cfe:	009b      	lsls	r3, r3, #2
+ 8001d00:	4413      	add	r3, r2
+ 8001d02:	685a      	ldr	r2, [r3, #4]
+ 8001d04:	78fb      	ldrb	r3, [r7, #3]
+ 8001d06:	f3c2 020e 	ubfx	r2, r2, #0, #15
+ 8001d0a:	6879      	ldr	r1, [r7, #4]
+ 8001d0c:	33e0      	adds	r3, #224	; 0xe0
+ 8001d0e:	009b      	lsls	r3, r3, #2
+ 8001d10:	440b      	add	r3, r1
+ 8001d12:	605a      	str	r2, [r3, #4]
+  }
+
+  return USBH_OK;
+ 8001d14:	2300      	movs	r3, #0
+}
+ 8001d16:	4618      	mov	r0, r3
+ 8001d18:	370c      	adds	r7, #12
+ 8001d1a:	46bd      	mov	sp, r7
+ 8001d1c:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001d20:	4770      	bx	lr
+
+08001d22 <HAL_HCD_SOF_Callback>:
+  * @brief  SOF callback.
+  * @param  hhcd: HCD handle
+  * @retval None
+  */
+void HAL_HCD_SOF_Callback(HCD_HandleTypeDef *hhcd)
+{
+ 8001d22:	b580      	push	{r7, lr}
+ 8001d24:	b082      	sub	sp, #8
+ 8001d26:	af00      	add	r7, sp, #0
+ 8001d28:	6078      	str	r0, [r7, #4]
+  USBH_LL_IncTimer(hhcd->pData);
+ 8001d2a:	687b      	ldr	r3, [r7, #4]
+ 8001d2c:	f8d3 3300 	ldr.w	r3, [r3, #768]	; 0x300
+ 8001d30:	4618      	mov	r0, r3
+ 8001d32:	f7ff ff57 	bl	8001be4 <USBH_LL_IncTimer>
+}
+ 8001d36:	bf00      	nop
+ 8001d38:	3708      	adds	r7, #8
+ 8001d3a:	46bd      	mov	sp, r7
+ 8001d3c:	bd80      	pop	{r7, pc}
+
+08001d3e <HAL_HCD_Connect_Callback>:
+  * @brief  SOF callback.
+  * @param  hhcd: HCD handle
+  * @retval None
+  */
+void HAL_HCD_Connect_Callback(HCD_HandleTypeDef *hhcd)
+{
+ 8001d3e:	b580      	push	{r7, lr}
+ 8001d40:	b082      	sub	sp, #8
+ 8001d42:	af00      	add	r7, sp, #0
+ 8001d44:	6078      	str	r0, [r7, #4]
+  USBH_LL_Connect(hhcd->pData);
+ 8001d46:	687b      	ldr	r3, [r7, #4]
+ 8001d48:	f8d3 3300 	ldr.w	r3, [r3, #768]	; 0x300
+ 8001d4c:	4618      	mov	r0, r3
+ 8001d4e:	f7ff ff8f 	bl	8001c70 <USBH_LL_Connect>
+}
+ 8001d52:	bf00      	nop
+ 8001d54:	3708      	adds	r7, #8
+ 8001d56:	46bd      	mov	sp, r7
+ 8001d58:	bd80      	pop	{r7, pc}
+
+08001d5a <HAL_HCD_Disconnect_Callback>:
+  * @brief  SOF callback.
+  * @param  hhcd: HCD handle
+  * @retval None
+  */
+void HAL_HCD_Disconnect_Callback(HCD_HandleTypeDef *hhcd)
+{
+ 8001d5a:	b580      	push	{r7, lr}
+ 8001d5c:	b082      	sub	sp, #8
+ 8001d5e:	af00      	add	r7, sp, #0
+ 8001d60:	6078      	str	r0, [r7, #4]
+  USBH_LL_Disconnect(hhcd->pData);
+ 8001d62:	687b      	ldr	r3, [r7, #4]
+ 8001d64:	f8d3 3300 	ldr.w	r3, [r3, #768]	; 0x300
+ 8001d68:	4618      	mov	r0, r3
+ 8001d6a:	f7ff ff98 	bl	8001c9e <USBH_LL_Disconnect>
+}
+ 8001d6e:	bf00      	nop
+ 8001d70:	3708      	adds	r7, #8
+ 8001d72:	46bd      	mov	sp, r7
+ 8001d74:	bd80      	pop	{r7, pc}
+
+08001d76 <HAL_HCD_HC_NotifyURBChange_Callback>:
+  * @param  chnum: channel number
+  * @param  urb_state: state
+  * @retval None
+  */
+void HAL_HCD_HC_NotifyURBChange_Callback(HCD_HandleTypeDef *hhcd, uint8_t chnum, HCD_URBStateTypeDef urb_state)
+{
+ 8001d76:	b480      	push	{r7}
+ 8001d78:	b083      	sub	sp, #12
+ 8001d7a:	af00      	add	r7, sp, #0
+ 8001d7c:	6078      	str	r0, [r7, #4]
+ 8001d7e:	460b      	mov	r3, r1
+ 8001d80:	70fb      	strb	r3, [r7, #3]
+ 8001d82:	4613      	mov	r3, r2
+ 8001d84:	70bb      	strb	r3, [r7, #2]
+  /* To be used with OS to sync URB state with the global state machine */
+#if (USBH_USE_OS == 1)
+  USBH_LL_NotifyURBChange(hhcd->pData);
+#endif
+}
+ 8001d86:	bf00      	nop
+ 8001d88:	370c      	adds	r7, #12
+ 8001d8a:	46bd      	mov	sp, r7
+ 8001d8c:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001d90:	4770      	bx	lr
+
+08001d92 <HAL_HCD_PortEnabled_Callback>:
+* @brief  Port Port Enabled callback.
+  * @param  hhcd: HCD handle
+  * @retval None
+  */
+void HAL_HCD_PortEnabled_Callback(HCD_HandleTypeDef *hhcd)
+{
+ 8001d92:	b580      	push	{r7, lr}
+ 8001d94:	b082      	sub	sp, #8
+ 8001d96:	af00      	add	r7, sp, #0
+ 8001d98:	6078      	str	r0, [r7, #4]
+  USBH_LL_PortEnabled(hhcd->pData);
+ 8001d9a:	687b      	ldr	r3, [r7, #4]
+ 8001d9c:	f8d3 3300 	ldr.w	r3, [r3, #768]	; 0x300
+ 8001da0:	4618      	mov	r0, r3
+ 8001da2:	f7ff ff49 	bl	8001c38 <USBH_LL_PortEnabled>
+}
+ 8001da6:	bf00      	nop
+ 8001da8:	3708      	adds	r7, #8
+ 8001daa:	46bd      	mov	sp, r7
+ 8001dac:	bd80      	pop	{r7, pc}
+
+08001dae <HAL_HCD_PortDisabled_Callback>:
+  * @brief  Port Port Disabled callback.
+  * @param  hhcd: HCD handle
+  * @retval None
+  */
+void HAL_HCD_PortDisabled_Callback(HCD_HandleTypeDef *hhcd)
+{
+ 8001dae:	b580      	push	{r7, lr}
+ 8001db0:	b082      	sub	sp, #8
+ 8001db2:	af00      	add	r7, sp, #0
+ 8001db4:	6078      	str	r0, [r7, #4]
+  USBH_LL_PortDisabled(hhcd->pData);
+ 8001db6:	687b      	ldr	r3, [r7, #4]
+ 8001db8:	f8d3 3300 	ldr.w	r3, [r3, #768]	; 0x300
+ 8001dbc:	4618      	mov	r0, r3
+ 8001dbe:	f7ff ff49 	bl	8001c54 <USBH_LL_PortDisabled>
+}
+ 8001dc2:	bf00      	nop
+ 8001dc4:	3708      	adds	r7, #8
+ 8001dc6:	46bd      	mov	sp, r7
+ 8001dc8:	bd80      	pop	{r7, pc}
+
+08001dca <USBH_LL_Stop>:
+  * @brief  Stop the low level portion of the host driver.
+  * @param  phost: Host handle
+  * @retval USBH status
+  */
+USBH_StatusTypeDef USBH_LL_Stop(USBH_HandleTypeDef *phost)
+{
+ 8001dca:	b580      	push	{r7, lr}
+ 8001dcc:	b084      	sub	sp, #16
+ 8001dce:	af00      	add	r7, sp, #0
+ 8001dd0:	6078      	str	r0, [r7, #4]
+  HAL_StatusTypeDef hal_status = HAL_OK;
+ 8001dd2:	2300      	movs	r3, #0
+ 8001dd4:	73fb      	strb	r3, [r7, #15]
+  USBH_StatusTypeDef usb_status = USBH_OK;
+ 8001dd6:	2300      	movs	r3, #0
+ 8001dd8:	73bb      	strb	r3, [r7, #14]
+
+  hal_status = HAL_HCD_Stop(phost->pData);
+ 8001dda:	687b      	ldr	r3, [r7, #4]
+ 8001ddc:	f8d3 33d0 	ldr.w	r3, [r3, #976]	; 0x3d0
+ 8001de0:	4618      	mov	r0, r3
+ 8001de2:	f7fe fc06 	bl	80005f2 <HAL_HCD_Stop>
+ 8001de6:	4603      	mov	r3, r0
+ 8001de8:	73fb      	strb	r3, [r7, #15]
+
+  usb_status = USBH_Get_USB_Status(hal_status);
+ 8001dea:	7bfb      	ldrb	r3, [r7, #15]
+ 8001dec:	4618      	mov	r0, r3
+ 8001dee:	f000 f807 	bl	8001e00 <USBH_Get_USB_Status>
+ 8001df2:	4603      	mov	r3, r0
+ 8001df4:	73bb      	strb	r3, [r7, #14]
+
+  return usb_status;
+ 8001df6:	7bbb      	ldrb	r3, [r7, #14]
+}
+ 8001df8:	4618      	mov	r0, r3
+ 8001dfa:	3710      	adds	r7, #16
+ 8001dfc:	46bd      	mov	sp, r7
+ 8001dfe:	bd80      	pop	{r7, pc}
+
+08001e00 <USBH_Get_USB_Status>:
+  * @brief  Returns the USB status depending on the HAL status:
+  * @param  hal_status: HAL status
+  * @retval USB status
+  */
+USBH_StatusTypeDef USBH_Get_USB_Status(HAL_StatusTypeDef hal_status)
+{
+ 8001e00:	b480      	push	{r7}
+ 8001e02:	b085      	sub	sp, #20
+ 8001e04:	af00      	add	r7, sp, #0
+ 8001e06:	4603      	mov	r3, r0
+ 8001e08:	71fb      	strb	r3, [r7, #7]
+  USBH_StatusTypeDef usb_status = USBH_OK;
+ 8001e0a:	2300      	movs	r3, #0
+ 8001e0c:	73fb      	strb	r3, [r7, #15]
+
+  switch (hal_status)
+ 8001e0e:	79fb      	ldrb	r3, [r7, #7]
+ 8001e10:	2b03      	cmp	r3, #3
+ 8001e12:	d817      	bhi.n	8001e44 <USBH_Get_USB_Status+0x44>
+ 8001e14:	a201      	add	r2, pc, #4	; (adr r2, 8001e1c <USBH_Get_USB_Status+0x1c>)
+ 8001e16:	f852 f023 	ldr.w	pc, [r2, r3, lsl #2]
+ 8001e1a:	bf00      	nop
+ 8001e1c:	08001e2d 	.word	0x08001e2d
+ 8001e20:	08001e33 	.word	0x08001e33
+ 8001e24:	08001e39 	.word	0x08001e39
+ 8001e28:	08001e3f 	.word	0x08001e3f
+  {
+    case HAL_OK :
+      usb_status = USBH_OK;
+ 8001e2c:	2300      	movs	r3, #0
+ 8001e2e:	73fb      	strb	r3, [r7, #15]
+    break;
+ 8001e30:	e00b      	b.n	8001e4a <USBH_Get_USB_Status+0x4a>
+    case HAL_ERROR :
+      usb_status = USBH_FAIL;
+ 8001e32:	2302      	movs	r3, #2
+ 8001e34:	73fb      	strb	r3, [r7, #15]
+    break;
+ 8001e36:	e008      	b.n	8001e4a <USBH_Get_USB_Status+0x4a>
+    case HAL_BUSY :
+      usb_status = USBH_BUSY;
+ 8001e38:	2301      	movs	r3, #1
+ 8001e3a:	73fb      	strb	r3, [r7, #15]
+    break;
+ 8001e3c:	e005      	b.n	8001e4a <USBH_Get_USB_Status+0x4a>
+    case HAL_TIMEOUT :
+      usb_status = USBH_FAIL;
+ 8001e3e:	2302      	movs	r3, #2
+ 8001e40:	73fb      	strb	r3, [r7, #15]
+    break;
+ 8001e42:	e002      	b.n	8001e4a <USBH_Get_USB_Status+0x4a>
+    default :
+      usb_status = USBH_FAIL;
+ 8001e44:	2302      	movs	r3, #2
+ 8001e46:	73fb      	strb	r3, [r7, #15]
+    break;
+ 8001e48:	bf00      	nop
+  }
+  return usb_status;
+ 8001e4a:	7bfb      	ldrb	r3, [r7, #15]
+}
+ 8001e4c:	4618      	mov	r0, r3
+ 8001e4e:	3714      	adds	r7, #20
+ 8001e50:	46bd      	mov	sp, r7
+ 8001e52:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8001e56:	4770      	bx	lr
+
+08001e58 <__libc_init_array>:
+ 8001e58:	b570      	push	{r4, r5, r6, lr}
+ 8001e5a:	4d0d      	ldr	r5, [pc, #52]	; (8001e90 <__libc_init_array+0x38>)
+ 8001e5c:	4c0d      	ldr	r4, [pc, #52]	; (8001e94 <__libc_init_array+0x3c>)
+ 8001e5e:	1b64      	subs	r4, r4, r5
+ 8001e60:	10a4      	asrs	r4, r4, #2
+ 8001e62:	2600      	movs	r6, #0
+ 8001e64:	42a6      	cmp	r6, r4
+ 8001e66:	d109      	bne.n	8001e7c <__libc_init_array+0x24>
+ 8001e68:	4d0b      	ldr	r5, [pc, #44]	; (8001e98 <__libc_init_array+0x40>)
+ 8001e6a:	4c0c      	ldr	r4, [pc, #48]	; (8001e9c <__libc_init_array+0x44>)
+ 8001e6c:	f000 f818 	bl	8001ea0 <_init>
+ 8001e70:	1b64      	subs	r4, r4, r5
+ 8001e72:	10a4      	asrs	r4, r4, #2
+ 8001e74:	2600      	movs	r6, #0
+ 8001e76:	42a6      	cmp	r6, r4
+ 8001e78:	d105      	bne.n	8001e86 <__libc_init_array+0x2e>
+ 8001e7a:	bd70      	pop	{r4, r5, r6, pc}
+ 8001e7c:	f855 3b04 	ldr.w	r3, [r5], #4
+ 8001e80:	4798      	blx	r3
+ 8001e82:	3601      	adds	r6, #1
+ 8001e84:	e7ee      	b.n	8001e64 <__libc_init_array+0xc>
+ 8001e86:	f855 3b04 	ldr.w	r3, [r5], #4
+ 8001e8a:	4798      	blx	r3
+ 8001e8c:	3601      	adds	r6, #1
+ 8001e8e:	e7f2      	b.n	8001e76 <__libc_init_array+0x1e>
+ 8001e90:	08001eb8 	.word	0x08001eb8
+ 8001e94:	08001eb8 	.word	0x08001eb8
+ 8001e98:	08001eb8 	.word	0x08001eb8
+ 8001e9c:	08001ebc 	.word	0x08001ebc
+
+08001ea0 <_init>:
+ 8001ea0:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 8001ea2:	bf00      	nop
+ 8001ea4:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 8001ea6:	bc08      	pop	{r3}
+ 8001ea8:	469e      	mov	lr, r3
+ 8001eaa:	4770      	bx	lr
+
+08001eac <_fini>:
+ 8001eac:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 8001eae:	bf00      	nop
+ 8001eb0:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 8001eb2:	bc08      	pop	{r3}
+ 8001eb4:	469e      	mov	lr, r3
+ 8001eb6:	4770      	bx	lr
